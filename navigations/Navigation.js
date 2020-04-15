@@ -5,6 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // imports all view files
 import Login from '../views/Login';
+import Profile from '../views/Profile';
+import Registration from '../views/Registration';
 
 const Stack = createStackNavigator();
 
@@ -12,8 +14,19 @@ class Navigation extends Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Login" component={Login} />
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen 
+            name="Login" 
+            component={Login} 
+          />
+          <Stack.Screen 
+            name="Registration" 
+            component={Registration} 
+          />
+          <Stack.Screen 
+            name="Profile" 
+            component={Profile} 
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );
