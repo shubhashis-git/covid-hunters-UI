@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
+import { View, Text, AsyncStorage, StyleSheet, Alert } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -56,13 +56,28 @@ class Profile extends Component {
     });
   }
 
-  logOut = async () => {
-    try {
-      await AsyncStorage.clear();
-      this.props.navigation.navigate('Login');
-    } catch (error) {
-      console.log(error);
-    }
+  logOut = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure ?',
+      [
+        {
+          text: 'No',
+          style: 'cancel'
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            try {
+              await AsyncStorage.clear();
+              this.props.navigation.navigate('Login');
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+      ]
+    );
   }
 
   render() {

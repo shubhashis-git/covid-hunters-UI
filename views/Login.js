@@ -15,21 +15,24 @@ class Login extends Component {
   }
 
   loginHandler = async () => {
-    this.setState({loginProcess: true});
-    UserLogin().then(resp => {
-      this.setState({loginProcess: false});
-      if (resp.status === 200) {
-        AsyncStorage.setItem('loggedInUser', JSON.stringify({
-          mobile: this.state.loginInput,
-          fname: resp.data.data.first_name,
-          lname: resp.data.data.last_name,
-          avatar: resp.data.data.avatar
-        }));
-        this.props.navigation.navigate('Profile');
-      } else {
-        showMessage({message: "Login Failed", description: resp.data, type: "danger", icon: "danger"});
-      }
-    });
+    const {loginInput} = this.state;
+    if (loginInput && !isNaN(loginInput)) {
+      this.setState({loginProcess: true});
+      UserLogin().then(resp => {
+        this.setState({loginProcess: false});
+        if (resp.status === 200) {
+          AsyncStorage.setItem('loggedInUser', JSON.stringify({
+            mobile: loginInput,
+            fname: resp.data.data.first_name,
+            lname: resp.data.data.last_name,
+            avatar: resp.data.data.avatar
+          }));
+          this.props.navigation.navigate('Profile');
+        } else {
+          showMessage({message: "Login Failed", description: resp.data, type: "danger", icon: "danger"});
+        }
+      });
+    }
   }
 
   textChangeHandler = (loginInput) => {
@@ -46,6 +49,7 @@ class Login extends Component {
             placeholder="Please enter your mobile number."
             onChangeText={this.textChangeHandler.bind(this)}
             value={loginInput}
+            maxLength={10}
           />
           <View style={{flexDirection: 'column', justifyContent: 'space-between'}}>
             <View style={{width: 150}}>
