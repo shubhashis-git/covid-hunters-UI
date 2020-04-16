@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // imports all view files
 import Login from '../views/Login';
 import Profile from '../views/Profile';
+import Admin from '../views/Admin';
 import Registration from '../views/Registration';
 
 const Stack = createStackNavigator();
@@ -26,6 +27,11 @@ class Navigation extends Component {
           <Stack.Screen 
             name="Profile" 
             component={Profile} 
+          />
+          <Stack.Screen 
+            name="Admin" 
+            options={{ title: 'Welcome' }}
+            component={Admin} 
           />
         </Stack.Navigator>
       </NavigationContainer>

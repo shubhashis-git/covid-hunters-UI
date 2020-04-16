@@ -15,7 +15,7 @@ class Login extends Component {
             placeholder="Please enter your mobile number."
           />
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Button title="Login" onPress={() => this.props.navigation.navigate('Profile')} color="red" />
+            <Button title="Login" onPress={() => this.props.navigation.navigate('Admin')} color="red" />
             <Button title="New user" onPress={() => this.props.navigation.navigate('Registration')} color="orange" />
           </View>
         </View>
