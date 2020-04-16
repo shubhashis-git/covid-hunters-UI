@@ -25,7 +25,10 @@ class Navigation extends Component {
           />
           <Stack.Screen 
             name="Profile" 
-            component={Profile} 
+            component={Profile}
+            options={{
+              title: 'My Profile'
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>

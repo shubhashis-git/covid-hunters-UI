@@ -1,22 +1,66 @@
 import React, {Component} from 'react';
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
+import { View, Text, TextInput, StyleSheet, AsyncStorage } from 'react-native';
+import { Button } from 'react-native-elements';
+import {UserLogin} from  '../services/ApiService';
+import { showMessage } from "react-native-flash-message";
 
 class Login extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      loginInput: '',
+      loginProcess: false
+    };
+  }
+
+  loginHandler = async () => {
+    this.setState({loginProcess: true});
+    UserLogin().then(resp => {
+      this.setState({loginProcess: false});
+      if (resp.status === 200) {
+        AsyncStorage.setItem('loggedInUser', JSON.stringify({
+          mobile: this.state.loginInput,
+          fname: resp.data.data.first_name,
+          lname: resp.data.data.last_name,
+          avatar: resp.data.data.avatar
+        }));
+        this.props.navigation.navigate('Profile');
+      } else {
+        showMessage({message: "Login Failed", description: resp.data, type: "danger", icon: "danger"});
+      }
+    });
+  }
+
+  textChangeHandler = (loginInput) => {
+    this.setState({loginInput});
   }
 
   render() {
+    const { loginInput, loginProcess } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputBox} 
             placeholder="Please enter your mobile number."
+            onChangeText={this.textChangeHandler.bind(this)}
+            value={loginInput}
           />
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Button title="Login" onPress={() => this.props.navigation.navigate('Profile')} color="red" />
-            <Button title="New user" onPress={() => this.props.navigation.navigate('Registration')} color="orange" />
+          <View style={{flexDirection: 'column', justifyContent: 'space-between'}}>
+            <View style={{width: 150}}>
+            <Button 
+              title="Login" 
+              onPress={this.loginHandler.bind(this)}
+              loading={loginProcess}
+              disabled={loginProcess}
+            />
+            </View>
+            <Button 
+              title="New user ? Click Here"
+              type="clear" 
+              onPress={() => this.props.navigation.navigate('Registration')} 
+            />
           </View>
         </View>
       </View>
