@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Input, Divider } from 'react-native-elements';
+import { Input } from 'react-native-elements';
 
+const image = require("../assets/background.png");
 
 class Admin extends Component {
   constructor(props) {
     super(props);
+    this.searchPerson = this.searchPerson.bind(this);
   }
 
   openScanner() {
@@ -15,48 +17,69 @@ class Admin extends Component {
 
   searchPerson() {
     console.log('searchPerson');
+    this.props.navigation.navigate('AdminPersonDetails');
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <Input style={styles.input}
-            placeholder='Enter mobile number'
-          />
+        <ImageBackground source={image} style={styles.image}>
+          <View style={styles.containerWrapper}>
+            <View style={styles.inputContainer}>
+              <Input style={styles.input}
+                placeholder='Enter mobile number'
+              />
 
-          <Icon style={styles.searchIcon} onPress={this.searchPerson}
-            name="angle-right"
-            size={25}
-            color="black"
-          />
-        </View>
+              <Icon style={styles.searchIcon} onPress={this.searchPerson}
+                name="angle-right"
+                size={25}
+                color="white"
+              />
+            </View>
 
-        <Divider style={styles.divider} />
+            <Text style={styles.divider}> ────────  Or  ────────</Text>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Button title="Scan QR" onPress={this.openScanner} color="red" />
-        </View>
+            <Button style={styles.scanBtn} title="Scan QR" onPress={this.openScanner} color="#201484" />
+          </View>
+        </ImageBackground>
       </View>
     );
   }
 }
 { }
 const styles = StyleSheet.create({
+  containerWrapper: {
+    paddingVertical: 50,
+    paddingHorizontal: 30
+  },
   container: {
-    marginVertical: 50,
-    marginHorizontal: 30
+    flex: 1,
+    flexDirection: "column"
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center"
   },
   searchIcon: {
-    
+    borderWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#201484'
+  },
+  scanBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   inputContainer: {
-    flexDirection: 'row', 
-    justifyContent: 'space-between' 
+    flexDirection: 'row',
+    justifyContent: 'center',
+    margin: 30
   },
   divider: {
-    margin: 60,
-    backgroundColor: 'blue' 
+    margin: 80,
+    marginBottom: 100,
+    color: 'blue',
+    textAlign: 'center'
   }
 });
 
