@@ -2,10 +2,14 @@ import React, {Component} from 'react';
 import { View, Text, AsyncStorage, StyleSheet, Alert } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      text: 'red'
+    };
   }
 
   async UNSAFE_componentWillMount() {
@@ -80,11 +84,21 @@ class Profile extends Component {
     );
   }
 
+  getScanData = () => {
+    return (
+      <View>
+        <Text>{this.state.text}</Text>
+      </View>
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        
-        
+        <QRCode
+          value={this.state.text}
+          size={150}
+        />        
       </View>
     );
   }
