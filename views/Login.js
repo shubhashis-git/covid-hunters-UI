@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, TextInput, StyleSheet, AsyncStorage } from 'react-native';
+import { View, Text, TextInput, StyleSheet, AsyncStorage, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-elements';
 import {UserLogin} from  '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
@@ -9,7 +9,7 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      loginInput: '',
+      loginInput: '9836252196',
       loginProcess: false
     };
   }
@@ -18,16 +18,19 @@ class Login extends Component {
     const {loginInput} = this.state;
     if (loginInput && !isNaN(loginInput)) {
       this.setState({loginProcess: true});
-      UserLogin().then(resp => {
+      UserLogin(loginInput).then(resp => {
         this.setState({loginProcess: false});
         if (resp.status === 200) {
-          AsyncStorage.setItem('loggedInUser', JSON.stringify({
-            mobile: loginInput,
-            fname: resp.data.data.first_name,
-            lname: resp.data.data.last_name,
-            avatar: resp.data.data.avatar
-          }));
-          this.props.navigation.navigate('Profile');
+          if (resp.data.length) {
+            AsyncStorage.setItem('loggedInUser', JSON.stringify(resp.data[0]));
+            if (resp.data[0].role === 'admin') {
+              this.props.navigation.navigate('Admin');
+            } else {
+              this.props.navigation.navigate('Profile');
+            }
+          } else {
+            showMessage({message: "Login Failed", description: 'Invalid login data', type: "danger", icon: "danger"});
+          }
         } else {
           showMessage({message: "Login Failed", description: resp.data, type: "danger", icon: "danger"});
         }
@@ -40,7 +43,7 @@ class Login extends Component {
   }
 
   render() {
-    const { loginInput, loginProcess } = this.state;
+    const { loginInput, loginProcess, scanned } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.inputContainer}>
@@ -87,6 +90,23 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10
   },
+  centerText: {
+    flex: 1,
+    fontSize: 18,
+    padding: 32,
+    color: '#777'
+  },
+  textBold: {
+    fontWeight: '500',
+    color: '#000'
+  },
+  buttonText: {
+    fontSize: 21,
+    color: 'rgb(0,122,255)'
+  },
+  buttonTouchable: {
+    padding: 16
+  }
 });
 
 export default Login;

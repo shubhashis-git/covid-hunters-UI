@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
-import { View, Text, AsyncStorage, StyleSheet, Alert } from 'react-native';
+import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
-import QRCode from 'react-native-qrcode-svg';
+import Logout from './Logout';
+import {QRCode} from 'react-native-custom-qr-codes-expo';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: 'red'
+      qrCodeData: null
     };
   }
 
@@ -17,6 +17,7 @@ class Profile extends Component {
       let loggedInUser = await AsyncStorage.getItem('loggedInUser');
       if (loggedInUser) {
         loggedInUser = JSON.parse(loggedInUser);
+        this.setState({qrCodeData: loggedInUser.mobile});
         this.displayHeader(loggedInUser);
       }
     } catch (error) {
@@ -25,6 +26,7 @@ class Profile extends Component {
   }
 
   displayHeader = (loggedInUser) => {
+    
     this.props.navigation.setOptions({
       headerStyle: {
         height: 280,
@@ -37,68 +39,34 @@ class Profile extends Component {
             <Avatar
               size={140}
               rounded
-              source={{
-                uri: loggedInUser.avatar,
-              }}
+              source={{uri: loggedInUser.avatar}}
             />
             <View>
               <Text style={styles.headerTitleText}>
-                {`${loggedInUser.fname} ${loggedInUser.lname}`}
+                {`${loggedInUser.first_name} ${loggedInUser.last_name}`}
               </Text>
             <Text style={styles.headerTitleText}>{loggedInUser.mobile}</Text>
             </View>
           </View>
         );
       },
-      headerRight: () => {
-        return (
-          <View style={{marginBottom: 100, marginRight: 10 }}>
-            <Ionicons name="md-log-out" size={30} color="#fff8dc" onPress={this.logOut.bind(this)} />
-          </View>
-        );
-      }
+      headerRight: () => <Logout navigation={this.props.navigation} />
     });
   }
 
-  logOut = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure ?',
-      [
-        {
-          text: 'No',
-          style: 'cancel'
-        },
-        {
-          text: 'Yes',
-          onPress: async () => {
-            try {
-              await AsyncStorage.clear();
-              this.props.navigation.navigate('Login');
-            } catch (error) {
-              console.log(error);
-            }
-          }
-        }
-      ]
-    );
-  }
-
-  getScanData = () => {
-    return (
-      <View>
-        <Text>{this.state.text}</Text>
-      </View>
-    );
-  }
-
   render() {
+    const {qrCodeData} = this.state;
     return (
       <View style={styles.container}>
-        <QRCode
-          value={this.state.text}
-          size={150}
-        />        
+        {qrCodeData &&
+          <View style={{borderWidth: 2, borderColor: '#191970', width: 205}}>
+            <QRCode 
+              codeStyle='square' 
+              content={qrCodeData} 
+              size={200} color='#191970'
+            />
+          </View>
+        }    
       </View>
     );
   }
