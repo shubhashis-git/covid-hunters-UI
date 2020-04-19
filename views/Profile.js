@@ -26,7 +26,6 @@ class Profile extends Component {
   }
 
   displayHeader = (loggedInUser) => {
-    
     this.props.navigation.setOptions({
       headerStyle: {
         height: 280,
