@@ -40,10 +40,12 @@ class AdminPersonDetails extends Component {
     return (
       <View style={styles.container}>
         <Card>
-          <Image
-            style={{ width: 200, height: 200, marginVertical: 0, marginHorizontal: 'auto' }}
-            source={{ uri: personDetails.avatar }}
-          />
+          <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+            <Image
+              style={{ width: 200, height: 200 }}
+              source={{ uri: personDetails.avatar }}
+            />
+          </View>
           <Text style={{ marginBottom: 10, marginTop: 30 }}>
             Phone: {personDetails.mobile}
           </Text>

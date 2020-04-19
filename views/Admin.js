@@ -5,7 +5,6 @@ import { Input } from 'react-native-elements';
 import Logout from './Logout';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { showMessage } from "react-native-flash-message";
-import { Ionicons } from '@expo/vector-icons';
 
 const image = require("../assets/background.png");
 
@@ -15,8 +14,6 @@ class Admin extends Component {
     this.state = {
       hasPermission: null,
       scanned: true,
-      scannedData: null,
-      visibleModal: false
     };
     this.searchPerson = this.searchPerson.bind(this);
   }
@@ -29,7 +26,7 @@ class Admin extends Component {
         this.props.navigation.setOptions({
           headerLeft: null,
           title: `${loggedInUser.first_name} ${loggedInUser.last_name}`,
-          headerRight: () => <Logout navigation={this.props.navigation} />
+          headerRight: () => <Logout navigation={this.props.navigation} top='10'/>
         });
       }
 
@@ -48,7 +45,7 @@ class Admin extends Component {
   }
 
   handleBarCodeScanned = ({ type, data }) => {
-    this.setState({ scanned: true, scannedData: this.props.route.params.person, visibleModal: true });
+    this.searchPerson();
   };
 
   searchPerson() {
@@ -62,7 +59,7 @@ class Admin extends Component {
         <ImageBackground source={image} style={styles.image}>
           <View style={styles.containerWrapper}>
             <View style={styles.inputContainer}>
-              <Input style={styles.input} placeholder='Enter mobile number' />
+              <Input style={styles.input} placeholder='Enter mobile number' placeholderTextColor = "#000"/>
               <Icon style={styles.searchIcon} onPress={this.searchPerson}
                 name="angle-right"
                 size={25}
@@ -99,6 +96,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column"
   },
+  input: {
+    color: '#000'
+  },
   image: {
     flex: 1,
     justifyContent: "center"
@@ -123,23 +123,6 @@ const styles = StyleSheet.create({
     marginBottom: 100,
     color: 'blue',
     textAlign: 'center'
-  },
-  modalView: {
-    backgroundColor: '#f0f8ff',
-    margin: 15,
-    width: 365,
-    height: 740,
-    padding: 5,
-    borderRadius: 10,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
   }
 });
 

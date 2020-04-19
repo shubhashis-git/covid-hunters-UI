@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { View, AsyncStorage, Alert } from 'react-native';
 
@@ -10,7 +10,7 @@ class Logout extends Component {
   logOut = () => {
     Alert.alert(
       'Logout',
-      'Are you sure ?',
+      'Are you sure?',
       [
         {
           text: 'No',
@@ -32,13 +32,14 @@ class Logout extends Component {
   }
 
   render() {
+    const top = parseInt(this.props.top);
     return (
-      <View style={{marginRight: 10 }}>
-        <Ionicons 
-          name="md-log-out" 
-          size={30} 
-          color="#b22222" 
-          onPress={this.logOut.bind(this)} 
+      <View style={{ marginRight: 10, position: 'absolute', right: 10, top: top }}>
+        <Ionicons
+          name="md-log-out"
+          size={30}
+          color="#b22222"
+          onPress={this.logOut.bind(this)}
         />
       </View>
     );

@@ -13,7 +13,7 @@ export const UserLogin = async (loginInput) => {
         avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/josephstein/128.jpg',
         role: 'user',
         mobile: '9836252196',
-        status: 'Normal'
+        status: 'normal'
       },
       {
         id: 2,
