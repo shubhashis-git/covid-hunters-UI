@@ -1,33 +1,40 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, Alert, Modal, TouchableHighlight } from 'react-native'
-import { Card, Button } from 'react-native-elements'
+import { View, Text, Image, StyleSheet } from 'react-native'
+import { Card, Button, Overlay, CheckBox } from 'react-native-elements'
+import RadioButton from 'react-native-radio-button'
 
 class AdminPersonDetails extends Component {
   constructor(props) {
     super(props);
-    this.showModal = this.showModal.bind(this);
+    this.setStatus = this.setStatus.bind(this);
   }
 
   state = {
-    modalVisible: false
+    modalVisible: false,
+    status: 'normal'
   };
+
+  statusArr = [
+    { name: 'normal', color: 'green' },
+    { name: 'suspected', color: '#ff7600' },
+    { name: 'infected', color: 'red' },
+    { name: 'isolated', color: '#ff4f90' }];
 
   setModalVisible = (visible) => {
     this.setState({ modalVisible: visible });
-    // setTimeout(() => this.setState({ modalVisible: visible }), 600)
   }
 
-  showModal() {
-    console.log('showModal');
-    this.setModalVisible(true);
+  setStatus() {
+    console.log('status = ', this.state.status);
+    this.setModalVisible(false);
   }
 
   render() {
-    const { modalVisible } = this.state;
-    console.log('modalVisible = ', modalVisible);
+    const { modalVisible, status } = this.state;
+
     return (
-      <View>
-        <Card style={styles.cardView}>
+      <View style={styles.container}>
+        <Card>
           <Image
             style={{ width: 200, height: 200, marginVertical: 0, marginHorizontal: 'auto' }}
             source={require('../assets/man.jpeg')}
@@ -38,46 +45,39 @@ class AdminPersonDetails extends Component {
           <Text style={{ marginBottom: 30 }}>
             Status: Normal
     </Text>
-          <Button onPress={this.showModal}
+          <Button onPress={() => this.setModalVisible(true)}
             buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
             title='Change Status' />
         </Card>
 
         {
           modalVisible && (
-            <View style={styles.centeredView}>
-              <Modal
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                  Alert.alert("Modal has been closed.");
-                }}
-              >
-                <View style={styles.centeredView}>
-                  <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Hello World!</Text>
+            <Overlay isVisible={modalVisible} style={styles.overlay}
+              onBackdropPress={() => this.setModalVisible(false)}>
+              <View>
+                <Text style={styles.statusHeader}>
+                  Change the health status of the person under screening
+                  </Text>
 
-                    <TouchableHighlight
-                      style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                      onPress={() => {
-                        this.setModalVisible(!modalVisible);
-                      }}
-                    >
-                      <Text style={styles.textStyle}>Hide Modal</Text>
-                    </TouchableHighlight>
-                  </View>
-                </View>
-              </Modal>
+                {this.statusArr.map(item => {
+                  return (
+                    <View key={item.name} style={styles.radioContainer}>
+                      <RadioButton
+                        animation={'bounceIn'}
+                        isSelected={item.name === status}
+                        onPress={() => this.setState({ status: item.name })}
+                      />
 
-              <TouchableHighlight
-                style={styles.openButton}
-                onPress={() => {
-                  this.setModalVisible(true);
-                }}
-              >
-                <Text style={styles.textStyle}>Show Modal</Text>
-              </TouchableHighlight>
-            </View>
+                      <Text style={[styles.radioText, { color: item.color }]}>{item.name}</Text>
+                    </View>
+                  )
+                })}
+
+                <Button onPress={this.setStatus}
+                  buttonStyle={{ borderRadius: 0, margin: 20 }}
+                  title='Set Status' />
+              </View>
+            </Overlay>
           )
         }
       </View>
@@ -87,46 +87,33 @@ class AdminPersonDetails extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 30
+    position: 'relative',
+    height: '100%'
   },
-  cardView: {
-    flex: 1
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderWidth: 0
   },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
+  statusHeader: {
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 10,
+    fontWeight: 'bold',
+    marginBottom: 20
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
+  radioContainer: {
+    flexDirection: 'row',
+    margin: 20
   },
-  openButton: {
-    backgroundColor: "#F194FF",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center"
+  radioText: {
+    marginLeft: 20,
+    textTransform: 'capitalize',
+    fontSize: 18,
+    fontWeight: 'bold'
   }
 });
 
