@@ -24,7 +24,7 @@ class Login extends Component {
           if (resp.data.length) {
             AsyncStorage.setItem('loggedInUser', JSON.stringify(resp.data[0]));
             if (resp.data[0].role === 'admin') {
-              this.props.navigation.navigate('Admin');
+              this.props.navigation.navigate('Admin', {person: resp.person});
             } else {
               this.props.navigation.navigate('Profile');
             }

@@ -29,22 +29,27 @@ class AdminPersonDetails extends Component {
     this.setModalVisible(false);
   }
 
+  componentDidMount() {
+    this.setState({ status: this.props.route.params.data.status });
+  }
+
   render() {
     const { modalVisible, status } = this.state;
+    const personDetails = this.props.route.params.data;
 
     return (
       <View style={styles.container}>
         <Card>
           <Image
             style={{ width: 200, height: 200, marginVertical: 0, marginHorizontal: 'auto' }}
-            source={require('../assets/man.jpeg')}
+            source={{ uri: personDetails.avatar }}
           />
           <Text style={{ marginBottom: 10, marginTop: 30 }}>
-            Phone: 9876543210
-    </Text>
+            Phone: {personDetails.mobile}
+          </Text>
           <Text style={{ marginBottom: 30 }}>
-            Status: Normal
-    </Text>
+            Status: {status}
+          </Text>
           <Button onPress={() => this.setModalVisible(true)}
             buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
             title='Change Status' />
