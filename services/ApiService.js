@@ -1,8 +1,11 @@
+import axios from 'axios';
+
 export const UserLogin = async (loginInput) => {
   try {
-    const response = await fetch('https://reqres.in/api/users/2');
+    const response = await axios.get('https://reqres.in/api/users/2');
+
     if (response.status >= 200 && response.status <= 299) {
-      let jsondata = await response.json();
+      let jsondata = response.data
 
       // Sample role based login data start //
       const loginsampledata = [{
@@ -31,6 +34,20 @@ export const UserLogin = async (loginInput) => {
       // Sample role based login data End //
 
       return {status: 200, data: jsondata, person: loginsampledata[0]};
+    } else {
+      return {status: 500, data: 'Unable to get response from server'};
+    }
+  } catch (error) {
+    return {status: 500, data: 'Unable to get response from server'};
+  }
+};
+
+export const UserRegister = async (registerInput) => {
+  try {
+    console.log(registerInput);
+    const response = await axios.post('https://reqres.in/api/register', registerInput);
+    if (response.status >= 200 && response.status <= 299) {
+      return {status: 200, data: 'Registration is successfull'};
     } else {
       return {status: 500, data: 'Unable to get response from server'};
     }    
