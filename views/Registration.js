@@ -82,8 +82,8 @@ class Registration extends Component {
   }
 
   formValidate = () => {
-    const { firstName, lastName, mobile, image } = this.state.registerInput;
-    if (firstName && lastName && mobile) {
+    const {firstName, lastName, mobile, image} = this.state.registerInput;
+    if (firstName && lastName && mobile && image !== 'NA') {
       return true;
     } else {
       return false;
