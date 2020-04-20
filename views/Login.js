@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, AsyncStorage, Image, Text } from 'react-native';
+import { View, StyleSheet, AsyncStorage, Image, Text, Alert } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { UserLogin } from '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
@@ -24,9 +24,9 @@ class Login extends Component {
       const request = new XMLHttpRequest();
       request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
       request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-      request.send(JSON.stringify({mobile: loginInput}));
+      request.send(JSON.stringify({ mobile: loginInput }));
       request.onreadystatechange = e => {
-        this.setState({loginProcess: false});
+        this.setState({ loginProcess: false });
         if (request.readyState !== 4) {
           return;
         }
@@ -34,7 +34,9 @@ class Login extends Component {
         if (request.status === 200) {
           const successdata = JSON.parse(request.responseText);
           AsyncStorage.setItem('loggedInUser', request.responseText);
-          if (successdata.type === 'admin') {
+          if (successdata.type == 'admin') {
+            // Alert.alert(successdata.type)
+
             this.props.navigation.navigate('Admin');
           } else {
             this.props.navigation.navigate('Profile');
@@ -44,7 +46,7 @@ class Login extends Component {
         } else {
           //console.warn('error', request);
           //return {status: 500, data: 'Unable to get response from server'};
-          showMessage({message: "Login Failed", description: 'Failed login. PLease try again', type: "danger", icon: "danger"});
+          showMessage({ message: "Login Failed", description: 'Failed login. PLease try again', type: "danger", icon: "danger" });
         }
       };
     }
