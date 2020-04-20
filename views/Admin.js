@@ -16,7 +16,7 @@ class Admin extends Component {
       scanned: true,
       loginInput: ''
     };
-    this.searchPerson = this.searchPerson.bind(this);
+    this.searchPerson = this.searchPerson.bind(this, '');
   }
 
   async UNSAFE_componentWillMount() {
@@ -53,13 +53,9 @@ class Admin extends Component {
     this.searchPerson(data);
   };
 
-  searchPerson(mobile) {
-    mobile = mobile || this.state.loginInput;
-    Alert.alert(mobile);
-    this.loginHandler(mobile);
-  }
-
-  loginHandler = async (mobileNumber) => {
+  searchPerson = async (mobileNumber) => {
+    mobileNumber = mobileNumber || this.state.loginInput;
+    //console.log(mobileNumber);
     const request = new XMLHttpRequest();
     request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -69,12 +65,15 @@ class Admin extends Component {
         return;
       }
 
-      Alert.alert(request.status);
+      //Alert.alert(request.status);
 
       if (request.status === 200) {
+        //console.log(request);
         const successdata = JSON.parse(request.responseText);
+        //console.log(successdata);
         this.props.navigation.navigate('AdminPersonDetails', { data: successdata });
       } else {
+        //console.warn(request);
         showMessage({ message: "Search Failed", description: 'Search failed. PLease try again', type: "danger", icon: "danger" });
       }
     }
