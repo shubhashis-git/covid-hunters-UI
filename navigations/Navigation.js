@@ -37,7 +37,7 @@ class Navigation extends Component {
           />
           <Stack.Screen
             name="AdminPersonDetails"
-            options={{ title: 'Sujata Chanda' }}
+            options={{ title: 'Person Details' }}
             component={AdminPersonDetails}
           />
           <Stack.Screen

@@ -31,6 +31,7 @@ class AdminPersonDetails extends Component {
 
   async UNSAFE_componentWillMount() {
     const peronData = this.props.route.params.data;
+
     const request = new XMLHttpRequest();
     request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/get-conditions");
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -43,10 +44,10 @@ class AdminPersonDetails extends Component {
       if (request.status === 200) {
         const successdata = JSON.parse(request.responseText);
 
-        if (!successdata.length) {
+        if (!successdata || (successdata && !successdata.length)) {
           this.setState({ status: 'normal' });
         } else {
-          this.setState({ status: successdata[0].length });
+          this.setState({ status: successdata[0].status });
         }
       } else {
         showMessage({ message: "Search Failed", description: 'Search login. PLease try again', type: "danger", icon: "danger" });
@@ -67,10 +68,10 @@ class AdminPersonDetails extends Component {
               source={{ uri: personDetails.image }}
             />
           </View>
-          <Text style={{ marginBottom: 10, marginTop: 30 }}>
+          <Text style={{ marginTop: 30 }}>
             Name: {personDetails.firstName} {personDetails.lastName}
           </Text>
-          <Text style={{ marginBottom: 10, marginTop: 30 }}>
+          <Text style={{ marginBottom: 10, marginTop: 10 }}>
             Phone: {personDetails.mobile}
           </Text>
           <Text style={{ marginBottom: 30 }}>

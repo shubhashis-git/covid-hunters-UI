@@ -65,15 +65,10 @@ class Admin extends Component {
         return;
       }
 
-      //Alert.alert(request.status);
-
       if (request.status === 200) {
-        //console.log(request);
         const successdata = JSON.parse(request.responseText);
-        //console.log(successdata);
         this.props.navigation.navigate('AdminPersonDetails', { data: successdata });
       } else {
-        //console.warn(request);
         showMessage({ message: "Search Failed", description: 'Search failed. PLease try again', type: "danger", icon: "danger" });
       }
     }
