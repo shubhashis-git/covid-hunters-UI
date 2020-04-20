@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Image } from 'react-native';
 import { Button } from 'react-native-elements';
-import {UserRegister} from  '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import RadioForm from 'react-native-simple-radio-button';
+import { Notifications } from 'expo';
 
 class Registration extends Component {
   constructor(props) {
@@ -16,13 +16,27 @@ class Registration extends Component {
       registerInput: {
         firstName: '',
         lastName: '',
-        type: 'User',
+        type: 'user',
         mobile: '',
-        image: null
+        image: 'NA',
+        deviceId: ''
       },
       registerProcess: false
     };
 
+  }
+
+  UNSAFE_componentWillMount = async () => {
+    try {
+      const token = await Notifications.getExpoPushTokenAsync();
+      if (token) {
+        const {registerInput} = this.state;
+        registerInput.deviceId = token;
+        this.setState({registerInput});
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   componentDidMount() {
@@ -41,7 +55,7 @@ class Registration extends Component {
   _pickImage = async () => {
     try {
       let result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
@@ -65,27 +79,52 @@ class Registration extends Component {
 
   formValidate = () => {
     const {firstName, lastName, mobile, image} = this.state.registerInput;
-    if (firstName && lastName && mobile && image) {
+    if (firstName && lastName && mobile) {
       return true;
     } else {
       return false;
     }
   }
 
-  registerHandler = async () => {
+  resetAllFields = () => {
+    const registerInput = {
+      firstName: '',
+      lastName: '',
+      type: 'user',
+      mobile: '',
+      image: 'NA',
+      deviceId: ''
+    };
+    this.setState({registerInput});
+  }
+
+  registerHandler = () => {
+    console.log('11');
     if (this.formValidate()) {
+      console.log('22');
       const {registerInput} = this.state;
-      if (registerInput) {
-        this.setState({registerProcess: true});
-        UserRegister(registerInput).then(resp => {
-          this.setState({registerProcess: false});
-          if (resp.status === 200) {
-            showMessage({message: "Registration Successful", description: resp.data, type: "primary", icon: "primary"});
-          } else {
-            showMessage({message: "Registration Failed", description: resp.data, type: "danger", icon: "danger"});
-          }
-        });
-      }
+      console.log(registerInput);
+      this.setState({registerProcess: true});
+      const request = new XMLHttpRequest();
+      request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/register-user");
+      request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      request.send(JSON.stringify(registerInput));
+      request.onreadystatechange = e => {
+        this.setState({registerProcess: false});
+        if (request.readyState !== 4) {
+          return;
+        }
+
+        if (request.status === 200) {
+          //console.log('success', request.responseText);
+          this.resetAllFields();
+          showMessage({message: "Registration Success", description: 'You are successfully registered', type: "success", icon: "success"});
+        } else {
+          //console.warn('error', request);
+          //return {status: 500, data: 'Unable to get response from server'};
+          showMessage({message: "Registration Failed", description: 'Unable to get response from server', type: "danger", icon: "danger"});
+        }
+      };
     } else {
       showMessage({message: "Validation Failed", description: 'All fields are required.', type: "danger", icon: "danger"});
     }
@@ -94,8 +133,8 @@ class Registration extends Component {
   render() {
     const { registerInput, registerProcess } = this.state;
     const radio_props = [
-      {label: 'User', value: 'User' },
-      {label: 'Admin', value: 'Admin' }
+      {label: 'User', value: 'user' },
+      {label: 'Admin', value: 'admin' }
     ];
     return (
       <ScrollView style={styles.formContainer}>
@@ -134,11 +173,12 @@ class Registration extends Component {
             placeholder="Mobile..."
             value={registerInput.mobile}
             onChangeText={this.textChangeHandler.bind(this, 'mobile')}
+            maxLength={10}
           />
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Upload Photo</Text>
-          {registerInput.image && <Image source={{ uri: `data:image/gif;base64,${registerInput.image}` }} style={{ width: 200, height: 200 }} />}
+          {/*registerInput.image && <Image source={{ uri: `data:image/gif;base64,${registerInput.image}` }} style={{ width: 200, height: 200 }} />*/}
           <Button title="Pick an image from camera roll" onPress={this._pickImage} />
         </View>
         <View style={{flexDirection: 'column', justifyContent: 'space-between'}}>

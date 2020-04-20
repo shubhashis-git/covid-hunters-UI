@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet, AsyncStorage, TouchableOpacity } fro
 import { Button } from 'react-native-elements';
 import {UserLogin} from  '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
+import PushNotification from './PushNotification';
 
 class Login extends Component {
   constructor(props) {
@@ -70,6 +71,7 @@ class Login extends Component {
             />
           </View>
         </View>
+        {/* <PushNotification /> */}
       </View>
     );
   }
