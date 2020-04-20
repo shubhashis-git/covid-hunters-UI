@@ -51,7 +51,7 @@ class Login extends Component {
 
     return (
       <View style={styles.container}>
-        <Image source={image} style={styles.image}>
+        <Image source={image} style={styles.image} imageStyle={{ resizeMode: "stretch" }}>
         </Image>
 
         <Text style={styles.appHeadeTitle}>BeSafe</Text>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   appHeadeTitle: {
     fontSize: 40,
-    color:'#19aaff',
+    color: '#19aaff',
     position: 'absolute',
     left: '35%',
     top: 30

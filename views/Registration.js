@@ -1,12 +1,14 @@
-import React, {Component} from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, Image } from 'react-native';
-import { Button } from 'react-native-elements';
-import {UserRegister} from  '../services/ApiService';
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, ImageBackground } from 'react-native';
+import { Button, Input } from 'react-native-elements';
+import { UserRegister } from '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import RadioForm from 'react-native-simple-radio-button';
+
+const background = require('../assets/register_bkg.jpg');
 
 class Registration extends Component {
   constructor(props) {
@@ -48,9 +50,9 @@ class Registration extends Component {
         base64: true
       });
       if (!result.cancelled) {
-        const {registerInput} = this.state;
+        const { registerInput } = this.state;
         registerInput.image = result.base64;
-        this.setState({registerInput});
+        this.setState({ registerInput });
       }
     } catch (E) {
       console.log(E);
@@ -58,13 +60,13 @@ class Registration extends Component {
   };
 
   textChangeHandler = (field, value) => {
-    const {registerInput} = this.state;
+    const { registerInput } = this.state;
     registerInput[field] = value;
-    this.setState({registerInput});
+    this.setState({ registerInput });
   }
 
   formValidate = () => {
-    const {firstName, lastName, mobile, image} = this.state.registerInput;
+    const { firstName, lastName, mobile, image } = this.state.registerInput;
     if (firstName && lastName && mobile && image) {
       return true;
     } else {
@@ -74,97 +76,115 @@ class Registration extends Component {
 
   registerHandler = async () => {
     if (this.formValidate()) {
-      const {registerInput} = this.state;
+      const { registerInput } = this.state;
       if (registerInput) {
-        this.setState({registerProcess: true});
+        this.setState({ registerProcess: true });
         UserRegister(registerInput).then(resp => {
-          this.setState({registerProcess: false});
+          this.setState({ registerProcess: false });
           if (resp.status === 200) {
-            showMessage({message: "Registration Successful", description: resp.data, type: "primary", icon: "primary"});
+            showMessage({ message: "Registration Successful", description: resp.data, type: "primary", icon: "primary" });
           } else {
-            showMessage({message: "Registration Failed", description: resp.data, type: "danger", icon: "danger"});
+            showMessage({ message: "Registration Failed", description: resp.data, type: "danger", icon: "danger" });
           }
         });
       }
     } else {
-      showMessage({message: "Validation Failed", description: 'All fields are required.', type: "danger", icon: "danger"});
+      showMessage({ message: "Validation Failed", description: 'All fields are required.', type: "danger", icon: "danger" });
     }
   }
 
   render() {
     const { registerInput, registerProcess } = this.state;
     const radio_props = [
-      {label: 'User', value: 'User' },
-      {label: 'Admin', value: 'Admin' }
+      { label: 'User', value: 'User' },
+      { label: 'Admin', value: 'Admin' }
     ];
     return (
-      <ScrollView style={styles.formContainer}>
-        <View>
-          <RadioForm
-            radio_props={radio_props}
-            initial={0}
-            formHorizontal={true}
-            labelHorizontal={true}
-            animation={true}
-            onPress={this.textChangeHandler.bind(this, 'type')}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>First Name</Text>
-          <TextInput
-            placeholder='First Name...'
-            style={styles.inputTextBox}
-            value={registerInput.firstName}
-            onChangeText={this.textChangeHandler.bind(this, 'firstName')}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Last Name</Text>
-          <TextInput
-            placeholder='Last Name...'
-            style={styles.inputTextBox} 
-            value={registerInput.lastName}
-            onChangeText={this.textChangeHandler.bind(this, 'lastName')}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Mobile Number</Text>
-          <TextInput 
-            style={[styles.inputTextBox]}
-            placeholder="Mobile..."
-            value={registerInput.mobile}
-            onChangeText={this.textChangeHandler.bind(this, 'mobile')}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Upload Photo</Text>
-          {registerInput.image && <Image source={{ uri: `data:image/gif;base64,${registerInput.image}` }} style={{ width: 200, height: 200 }} />}
-          <Button title="Pick an image from camera roll" onPress={this._pickImage} />
-        </View>
-        <View style={{flexDirection: 'column', justifyContent: 'space-between'}}>
-          <View style={{width: 150}}>
-            <Button 
-              title="Submit" 
-              onPress={this.registerHandler.bind(this)}
-              loading={registerProcess}
-              disabled={registerProcess}
-            />
+      <View style={styles.formContainer}>
+        <ImageBackground source={background} style={styles.image} imageStyle={{ resizeMode: "stretch" }}>
+          <View style={styles.formContainerWrapper}>
+            <Text style={styles.headerText}>Lets get you on board</Text>
+            <View style={styles.inputContainer}>
+              <Input
+                placeholder='First Name'
+                style={styles.inputTextBox}
+                value={registerInput.firstName}
+                placeholderTextColor="#000000b8"
+                onChangeText={this.textChangeHandler.bind(this, 'firstName')}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Input
+                placeholder='Last Name'
+                placeholderTextColor="#000000b8"
+                style={styles.inputTextBox}
+                value={registerInput.lastName}
+                onChangeText={this.textChangeHandler.bind(this, 'lastName')}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Input
+                style={[styles.inputTextBox]}
+                placeholderTextColor="#000000b8"
+                placeholder="Mobile"
+                value={registerInput.mobile}
+                onChangeText={this.textChangeHandler.bind(this, 'mobile')}
+              />
+            </View>
+            <View style={{ margin: 10 }}>
+              <RadioForm
+                radio_props={radio_props}
+                initial={0}
+                formHorizontal={true}
+                labelHorizontal={true}
+                animation={true}
+                labelStyle={{ marginRight: 20 }}
+                onPress={this.textChangeHandler.bind(this, 'type')}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Upload Photo</Text>
+              {registerInput.image && <Image source={{ uri: `data:image/gif;base64,${registerInput.image}` }} style={{ width: 200, height: 200 }} />}
+              <Button title="Open camera" onPress={this._pickImage} />
+            </View>
+            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+              <Button
+                title="Submit"
+                onPress={this.registerHandler.bind(this)}
+                loading={registerProcess}
+                disabled={registerProcess}
+              />
+            </View>
           </View>
-          <Button 
-            title="Already registered ? Click Here"
-            type="clear" 
-            onPress={() => this.props.navigation.navigate('Login')} 
-          />
-        </View>
-      </ScrollView>
+        </ImageBackground>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   formContainer: {
-    margin: 30,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    height: '100%',
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20
+  },
+  formContainerWrapper: {
+    width: '85%',
+    padding: 15,
+    backgroundColor: '#ffffffe6'
+  },
+  image: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: "center",
+    alignItems: "center",
+    // opacity: 0.8
   },
   inputContainer: {
     flexDirection: 'column',
@@ -180,7 +200,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 15,
-    color: '#778899',
+    color: '#000000d1',
     marginBottom: 5
   },
   inputTextareaBox: {
