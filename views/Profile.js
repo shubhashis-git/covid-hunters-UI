@@ -26,34 +26,6 @@ class Profile extends Component {
     }
   }
 
-  /*displayHeader = (loggedInUser) => {
-    this.props.navigation.setOptions({
-      headerStyle: {
-        height: 280,
-        backgroundColor: '#228b22',
-      },
-      headerLeft: null,
-      headerTitle: () => {
-        return (
-          <View style={styles.headerTitleContainer}>
-            <Avatar
-              size={140}
-              rounded
-              source={{ uri: loggedInUser.image }}
-            />
-            <View>
-              <Text style={styles.headerTitleText}>
-                {`${loggedInUser.first_name} ${loggedInUser.last_name}`}
-              </Text>
-              <Text style={styles.headerTitleText}>{loggedInUser.mobile}</Text>
-            </View>
-          </View>
-        );
-      },
-      headerRight: () => <Logout navigation={this.props.navigation} />
-    });
-  }*/
-
   render() {
     const { qrCodeData, loggedInUser } = this.state;
 
@@ -66,20 +38,11 @@ class Profile extends Component {
         <View style={{ marginTop: 150, position: 'relative', width: '80%' }}>
           <View style={styles.profileContainer}>
             <View style={{ height: 120 }}>
-              {loggedInUser.image === 'NA' &&
-                <Avatar style={styles.avatar}
-                  size={140}
-                  rounded
-                  source={{ uri: loggedInUser.image }}
-                />
-              }
-              {loggedInUser.image !== 'NA' &&
-                <Avatar style={styles.avatar}
-                  size={140}
-                  rounded
-                  source={{ uri: loggedInUser.image }}
-                />
-              }
+            <Avatar style={styles.avatar}
+              size={140}
+              rounded
+              source={{ uri: `data:image/png;base64,${loggedInUser.image}` }}
+            />
             </View>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitleText}>

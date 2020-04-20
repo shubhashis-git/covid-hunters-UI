@@ -17,7 +17,7 @@ class Login extends Component {
     };
   }
 
-  loginHandler = async () => {
+  loginHandler = () => {
     const { loginInput } = this.state;
     if (loginInput && !isNaN(loginInput)) {
       this.setState({ loginProcess: true });
@@ -25,15 +25,16 @@ class Login extends Component {
       request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
       request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
       request.send(JSON.stringify({mobile: loginInput}));
-      request.onreadystatechange = e => {
-        this.setState({loginProcess: false});
+      request.onreadystatechange = async () => {
+        
         if (request.readyState !== 4) {
           return;
         }
 
         if (request.status === 200) {
           const successdata = JSON.parse(request.responseText);
-          AsyncStorage.setItem('loggedInUser', request.responseText);
+          await AsyncStorage.setItem('loggedInUser', request.responseText);
+          this.setState({loginProcess: false});
           if (successdata.type === 'admin') {
             this.props.navigation.navigate('Admin');
           } else {
@@ -42,6 +43,7 @@ class Login extends Component {
           //console.log('success', successdata);          
           //showMessage({message: "Registration Success", description: 'You are successfully registered', type: "success", icon: "success"});
         } else {
+          this.setState({loginProcess: false});
           //console.warn('error', request);
           //return {status: 500, data: 'Unable to get response from server'};
           showMessage({message: "Login Failed", description: 'Failed login. PLease try again', type: "danger", icon: "danger"});
