@@ -18,6 +18,9 @@ class Navigation extends Component {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
+            options={{
+              headerShown: false
+            }}
             name="Login"
             component={Login}
           />
@@ -26,6 +29,9 @@ class Navigation extends Component {
             component={Registration}
           />
           <Stack.Screen
+            options={{
+              headerShown: false
+            }}
             name="Profile"
             component={Profile}
           />

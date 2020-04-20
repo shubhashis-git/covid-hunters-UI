@@ -1,73 +1,87 @@
-import React, {Component} from 'react';
-import { View, Text, TextInput, StyleSheet, AsyncStorage, TouchableOpacity } from 'react-native';
-import { Button } from 'react-native-elements';
-import {UserLogin} from  '../services/ApiService';
+import React, { Component } from 'react';
+import { View, StyleSheet, AsyncStorage, Image, Text } from 'react-native';
+import { Button, Input } from 'react-native-elements';
+import { UserLogin } from '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
 import PushNotification from './PushNotification';
+
+const image = require("../assets/login_bkg.png");
 
 class Login extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      loginInput: '9836252196',
+      // loginInput: '',
+      // loginInput: '9836252196',
+      loginInput: '9062103433',
       loginProcess: false
     };
   }
 
   loginHandler = async () => {
-    const {loginInput} = this.state;
+    const { loginInput } = this.state;
     if (loginInput && !isNaN(loginInput)) {
-      this.setState({loginProcess: true});
+      this.setState({ loginProcess: true });
       UserLogin(loginInput).then(resp => {
-        this.setState({loginProcess: false});
+        this.setState({ loginProcess: false });
         if (resp.status === 200) {
           if (resp.data.length) {
             AsyncStorage.setItem('loggedInUser', JSON.stringify(resp.data[0]));
             if (resp.data[0].role === 'admin') {
-              this.props.navigation.navigate('Admin');
+              this.props.navigation.navigate('Admin', { person: resp.person });
             } else {
               this.props.navigation.navigate('Profile');
             }
           } else {
-            showMessage({message: "Login Failed", description: 'Invalid login data', type: "danger", icon: "danger"});
+            showMessage({ message: "Login Failed", description: 'Invalid login data', type: "danger", icon: "danger" });
           }
         } else {
-          showMessage({message: "Login Failed", description: resp.data, type: "danger", icon: "danger"});
+          showMessage({ message: "Login Failed", description: resp.data, type: "danger", icon: "danger" });
         }
       });
     }
   }
 
   textChangeHandler = (loginInput) => {
-    this.setState({loginInput});
+    this.setState({ loginInput });
   }
 
   render() {
-    const { loginInput, loginProcess, scanned } = this.state;
+    const { loginInput, loginProcess } = this.state;
+
     return (
       <View style={styles.container}>
+        <Image source={image} style={styles.image}>
+        </Image>
+
+        <Text style={styles.appHeadeTitle}>BeSafe</Text>
+
         <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputBox} 
-            placeholder="Please enter your mobile number."
+          <Input containerStyle={styles.inputBox}
+            inputContainerStyle={styles.inputContainerStyle}
+            inputStyle={styles.inputStyle}
+            placeholder='Mobile number'
+            leftIcon={{ type: 'font-awesome', name: 'user' }}
             onChangeText={this.textChangeHandler.bind(this)}
             value={loginInput}
             maxLength={10}
           />
-          <View style={{flexDirection: 'column', justifyContent: 'space-between'}}>
-            <View style={{width: 150}}>
-            <Button 
-              title="Login" 
+
+          <View style={{ flexDirection: 'column', justifyContent: 'space-between', width: '65%' }}>
+            <Button
+              title="Login"
+              style={styles.loginBtn}
+              buttonStyle={styles.buttonStyle}
               onPress={this.loginHandler.bind(this)}
               loading={loginProcess}
               disabled={loginProcess}
             />
-            </View>
-            <Button 
-              title="New user ? Click Here"
-              type="clear" 
-              onPress={() => this.props.navigation.navigate('Registration')} 
+            <Button
+              title="New user"
+              buttonStyle={{ marginTop: 30 }}
+              type="clear"
+              onPress={() => this.props.navigation.navigate('Registration')}
             />
           </View>
         </View>
@@ -79,32 +93,43 @@ class Login extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 30
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: '#000000'
+  },
+  image: {
+    height: '50%',
+    width: '100%'
+  },
+  appHeadeTitle: {
+    fontSize: 40,
+    color:'#19aaff',
+    position: 'absolute',
+    left: '35%',
+    top: 30
   },
   inputContainer: {
     flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'center'
   },
-  inputBox: {   
-    borderColor: '#CCC',
-    borderWidth: 2,
-    margin: 10,
-    padding: 10
+  inputBox: {
+    borderColor: '#19aaff',
+    borderWidth: 3,
+    borderRadius: 23,
+    width: '65%',
+    backgroundColor: '#fff',
+    marginTop: 60
   },
-  centerText: {
-    flex: 1,
-    fontSize: 18,
-    padding: 32,
-    color: '#777'
+  inputContainerStyle: {
+    borderBottomWidth: 0
   },
-  textBold: {
-    fontWeight: '500',
-    color: '#000'
+  inputStyle: {
+    paddingLeft: 15
   },
-  buttonText: {
-    fontSize: 21,
-    color: 'rgb(0,122,255)'
+  buttonStyle: {
+    borderRadius: 20,
+    marginTop: 40
   },
   buttonTouchable: {
     padding: 16

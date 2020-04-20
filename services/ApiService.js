@@ -16,7 +16,7 @@ export const UserLogin = async (loginInput) => {
         avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/josephstein/128.jpg',
         role: 'user',
         mobile: '9836252196',
-        status: 'Good'
+        status: 'normal'
       },
       {
         id: 2,
@@ -33,7 +33,7 @@ export const UserLogin = async (loginInput) => {
       });*/
       // Sample role based login data End //
 
-      return {status: 200, data: jsondata};
+      return {status: 200, data: jsondata, person: loginsampledata[0]};
     } else {
       return {status: 500, data: 'Unable to get response from server'};
     }
