@@ -137,8 +137,8 @@ class Registration extends Component {
   render() {
     const { registerInput, registerProcess } = this.state;
     const radio_props = [
-      { label: 'User', value: 'User' },
-      { label: 'Admin', value: 'Admin' }
+      { label: 'User', value: 'user' },
+      { label: 'Admin', value: 'admin' }
     ];
     return (
       <View style={styles.formContainer}>

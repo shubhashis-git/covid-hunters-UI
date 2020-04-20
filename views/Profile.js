@@ -26,34 +26,6 @@ class Profile extends Component {
     }
   }
 
-  /*displayHeader = (loggedInUser) => {
-    this.props.navigation.setOptions({
-      headerStyle: {
-        height: 280,
-        backgroundColor: '#228b22',
-      },
-      headerLeft: null,
-      headerTitle: () => {
-        return (
-          <View style={styles.headerTitleContainer}>
-            <Avatar
-              size={140}
-              rounded
-              source={{ uri: loggedInUser.image }}
-            />
-            <View>
-              <Text style={styles.headerTitleText}>
-                {`${loggedInUser.first_name} ${loggedInUser.last_name}`}
-              </Text>
-              <Text style={styles.headerTitleText}>{loggedInUser.mobile}</Text>
-            </View>
-          </View>
-        );
-      },
-      headerRight: () => <Logout navigation={this.props.navigation} />
-    });
-  }*/
-
   render() {
     const { qrCodeData, loggedInUser } = this.state;
 
@@ -90,7 +62,7 @@ class Profile extends Component {
                 {loggedInUser.status}
               </Text>
             </View>
-            <View style={styles.container}>
+            <View style={styles.container}>       
               {qrCodeData &&
                 <View style={{ borderWidth: 2, borderColor: '#191970', width: 205 }}>
                   {/* <QRCode

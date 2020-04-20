@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ImageBackground, StyleSheet, Button, AsyncStorage } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, Button, AsyncStorage, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input } from 'react-native-elements';
 import Logout from './Logout';
@@ -14,6 +14,7 @@ class Admin extends Component {
     this.state = {
       hasPermission: null,
       scanned: true,
+      loginInput: ''
     };
     this.searchPerson = this.searchPerson.bind(this);
   }
@@ -25,8 +26,8 @@ class Admin extends Component {
         loggedInUser = JSON.parse(loggedInUser);
         this.props.navigation.setOptions({
           headerLeft: null,
-          title: `${loggedInUser.first_name} ${loggedInUser.last_name}`,
-          headerRight: () => <Logout navigation={this.props.navigation} top='10'/>
+          title: `${loggedInUser.firstName} ${loggedInUser.lastName}`,
+          headerRight: () => <Logout navigation={this.props.navigation} top='10' />
         });
       }
 
@@ -44,12 +45,39 @@ class Admin extends Component {
     }
   }
 
+  textChangeHandler = (loginInput) => {
+    this.setState({ loginInput });
+  }
+
   handleBarCodeScanned = ({ type, data }) => {
-    this.searchPerson();
+    this.searchPerson(data);
   };
 
-  searchPerson() {
-    this.props.navigation.navigate('AdminPersonDetails', { data: this.props.route.params.person });
+  searchPerson(mobile) {
+    mobile = mobile || this.state.loginInput;
+    Alert.alert(mobile);
+    this.loginHandler(mobile);
+  }
+
+  loginHandler = async (mobileNumber) => {
+    const request = new XMLHttpRequest();
+    request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.send(JSON.stringify({ mobile: mobileNumber }));
+    request.onreadystatechange = e => {
+      if (request.readyState !== 4) {
+        return;
+      }
+
+      Alert.alert(request.status);
+
+      if (request.status === 200) {
+        const successdata = JSON.parse(request.responseText);
+        this.props.navigation.navigate('AdminPersonDetails', { data: successdata });
+      } else {
+        showMessage({ message: "Search Failed", description: 'Search failed. PLease try again', type: "danger", icon: "danger" });
+      }
+    }
   }
 
   render() {
@@ -59,7 +87,8 @@ class Admin extends Component {
         <ImageBackground source={image} style={styles.image}>
           <View style={styles.containerWrapper}>
             <View style={styles.inputContainer}>
-              <Input style={styles.input} placeholder='Enter mobile number' placeholderTextColor = "#000"/>
+              <Input style={styles.input} placeholder='Enter mobile number' placeholderTextColor="#000"
+                onChangeText={this.textChangeHandler.bind(this)} />
               <Icon style={styles.searchIcon} onPress={this.searchPerson}
                 name="angle-right"
                 size={25}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, Alert } from 'react-native'
 import { Card, Button, Overlay, CheckBox } from 'react-native-elements'
 import RadioButton from 'react-native-radio-button'
 
@@ -29,8 +29,29 @@ class AdminPersonDetails extends Component {
     this.setModalVisible(false);
   }
 
-  componentDidMount() {
-    this.setState({ status: this.props.route.params.data.status });
+  async UNSAFE_componentWillMount() {
+    const peronData = this.props.route.params.data;
+    const request = new XMLHttpRequest();
+    request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/get-conditions");
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.send(JSON.stringify({ mobile: peronData.mobile }));
+    request.onreadystatechange = e => {
+      if (request.readyState !== 4) {
+        return;
+      }
+
+      if (request.status === 200) {
+        const successdata = JSON.parse(request.responseText);
+
+        if (!successdata.length) {
+          this.setState({ status: 'normal' });
+        } else {
+          this.setState({ status: successdata[0].length });
+        }
+      } else {
+        showMessage({ message: "Search Failed", description: 'Search login. PLease try again', type: "danger", icon: "danger" });
+      }
+    }
   }
 
   render() {
@@ -43,9 +64,12 @@ class AdminPersonDetails extends Component {
           <View style={{ flexDirection: 'column', alignItems: 'center' }}>
             <Image
               style={{ width: 200, height: 200 }}
-              source={{ uri: personDetails.avatar }}
+              source={{ uri: personDetails.image }}
             />
           </View>
+          <Text style={{ marginBottom: 10, marginTop: 30 }}>
+            Name: {personDetails.firstName} {personDetails.lastName}
+          </Text>
           <Text style={{ marginBottom: 10, marginTop: 30 }}>
             Phone: {personDetails.mobile}
           </Text>

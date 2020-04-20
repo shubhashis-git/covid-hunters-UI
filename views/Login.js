@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, AsyncStorage, Image, Text, Alert } from 'react-native';
+import { View, StyleSheet, AsyncStorage, Image, Text } from 'react-native';
 import { Button, Input } from 'react-native-elements';
-import { UserLogin } from '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
 import PushNotification from './PushNotification';
 
@@ -35,17 +34,11 @@ class Login extends Component {
           const successdata = JSON.parse(request.responseText);
           AsyncStorage.setItem('loggedInUser', request.responseText);
           if (successdata.type == 'admin') {
-            // Alert.alert(successdata.type)
-
-            this.props.navigation.navigate('Admin');
+            this.props.navigation.navigate('Admin', {data: successdata});
           } else {
             this.props.navigation.navigate('Profile');
           }
-          //console.log('success', successdata);          
-          //showMessage({message: "Registration Success", description: 'You are successfully registered', type: "success", icon: "success"});
         } else {
-          //console.warn('error', request);
-          //return {status: 500, data: 'Unable to get response from server'};
           showMessage({ message: "Login Failed", description: 'Failed login. PLease try again', type: "danger", icon: "danger" });
         }
       };

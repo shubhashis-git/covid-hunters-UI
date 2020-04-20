@@ -42,7 +42,6 @@ class Navigation extends Component {
           />
           <Stack.Screen
             name="Admin"
-            options={{ title: 'Welcome' }}
             component={Admin}
           />
         </Stack.Navigator>
