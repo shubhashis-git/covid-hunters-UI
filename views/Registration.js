@@ -63,7 +63,8 @@ class Registration extends Component {
       });
       if (!result.cancelled) {
         const {registerInput} = this.state;
-        registerInput.image = result.base64;
+        console.log(result.uri);
+        registerInput.image = result.uri;
         this.setState({registerInput});
       }
     } catch (E) {
@@ -120,7 +121,7 @@ class Registration extends Component {
           this.resetAllFields();
           showMessage({message: "Registration Success", description: 'You are successfully registered', type: "success", icon: "success"});
         } else {
-          //console.warn('error', request);
+          console.warn('error', request.status, request.responseText);
           //return {status: 500, data: 'Unable to get response from server'};
           showMessage({message: "Registration Failed", description: 'Unable to get response from server', type: "danger", icon: "danger"});
         }
@@ -178,7 +179,7 @@ class Registration extends Component {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Upload Photo</Text>
-          {/*registerInput.image && <Image source={{ uri: `data:image/gif;base64,${registerInput.image}` }} style={{ width: 200, height: 200 }} />*/}
+          {registerInput.image !== 'NA' && <Image source={{ uri: registerInput.image }} style={{ width: 200, height: 200 }} />}
           <Button title="Pick an image from camera roll" onPress={this._pickImage} />
         </View>
         <View style={{flexDirection: 'column', justifyContent: 'space-between'}}>
