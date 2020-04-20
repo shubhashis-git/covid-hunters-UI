@@ -38,20 +38,11 @@ class Profile extends Component {
         <View style={{ marginTop: 150, position: 'relative', width: '80%' }}>
           <View style={styles.profileContainer}>
             <View style={{ height: 120 }}>
-              {loggedInUser.image === 'NA' &&
-                <Avatar style={styles.avatar}
-                  size={140}
-                  rounded
-                  source={{ uri: loggedInUser.image }}
-                />
-              }
-              {loggedInUser.image !== 'NA' &&
-                <Avatar style={styles.avatar}
-                  size={140}
-                  rounded
-                  source={{ uri: loggedInUser.image }}
-                />
-              }
+            <Avatar style={styles.avatar}
+              size={140}
+              rounded
+              source={{ uri: `data:image/png;base64,${loggedInUser.image}` }}
+            />
             </View>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitleText}>

@@ -16,7 +16,7 @@ class Login extends Component {
     };
   }
 
-  loginHandler = async () => {
+  loginHandler = () => {
     const { loginInput } = this.state;
     if (loginInput && !isNaN(loginInput)) {
       this.setState({ loginProcess: true });
@@ -39,7 +39,7 @@ class Login extends Component {
             this.props.navigation.navigate('Profile');
           }
         } else {
-          showMessage({ message: "Login Failed", description: 'Failed login. PLease try again', type: "danger", icon: "danger" });
+          showMessage({message: "Login Failed", description: 'Failed login. PLease try again', type: "danger", icon: "danger"});
         }
       };
     }

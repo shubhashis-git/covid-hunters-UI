@@ -60,15 +60,14 @@ class Registration extends Component {
       let result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+        aspect: [1, 1],
+        quality: 0.1,
         base64: true
       });
       if (!result.cancelled) {
-        const {registerInput} = this.state;
-        console.log(result.uri);
-        registerInput.image = result.uri;
-        this.setState({registerInput});
+        const { registerInput } = this.state;
+        registerInput.image = result.base64;
+        this.setState({ registerInput });
       }
     } catch (E) {
       console.log(E);
@@ -82,7 +81,7 @@ class Registration extends Component {
   }
 
   formValidate = () => {
-    const {firstName, lastName, mobile, image} = this.state.registerInput;
+    const { firstName, lastName, mobile, image } = this.state.registerInput;
     if (firstName && lastName && mobile && image !== 'NA') {
       return true;
     } else {
@@ -186,7 +185,8 @@ class Registration extends Component {
             {/* style={{ width: 200, height: 200 }} */}
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Upload Photo</Text>
-              {registerInput.image !== 'NA' && <Image source={{ uri: registerInput.image }} style={{ width: 200, height: 200 }} />}
+              {registerInput.image !== 'NA' && 
+              <Image source={{ uri: `data:image/png;base64,${registerInput.image}` }} style={{ width: 200, height: 200 }} />}
               <Button title="Open camera" onPress={this._pickImage} />
             </View>
             <View style={{ flexDirection: 'column', alignItems: 'center' }}>
