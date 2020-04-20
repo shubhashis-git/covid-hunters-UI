@@ -82,7 +82,7 @@ class Admin extends Component {
           <View style={styles.containerWrapper}>
             <View style={styles.inputContainer}>
               <Input style={styles.input} placeholder='Enter mobile number' placeholderTextColor="#000"
-                onChangeText={this.textChangeHandler.bind(this)} />
+                onChangeText={this.textChangeHandler.bind(this)} maxLength={10} />
               <Icon style={styles.searchIcon} onPress={this.searchPerson}
                 name="angle-right"
                 size={25}

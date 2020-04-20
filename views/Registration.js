@@ -167,6 +167,7 @@ class Registration extends Component {
                 style={[styles.inputTextBox]}
                 placeholderTextColor="#000000b8"
                 placeholder="Mobile"
+                maxLength={10}
                 value={registerInput.mobile}
                 onChangeText={this.textChangeHandler.bind(this, 'mobile')}
               />

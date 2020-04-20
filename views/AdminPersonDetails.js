@@ -3,6 +3,8 @@ import { View, Text, Image, StyleSheet, Alert } from 'react-native'
 import { Card, Button, Overlay, CheckBox } from 'react-native-elements'
 import RadioButton from 'react-native-radio-button'
 
+const defaultImg = require('../assets/no_img.jpg');
+
 class AdminPersonDetails extends Component {
   constructor(props) {
     super(props);
@@ -11,7 +13,7 @@ class AdminPersonDetails extends Component {
 
   state = {
     modalVisible: false,
-    status: 'normal'
+    status: 'hello'
   };
 
   statusArr = [
@@ -25,8 +27,30 @@ class AdminPersonDetails extends Component {
   }
 
   setStatus() {
-    console.log('status = ', this.state.status);
-    this.setModalVisible(false);
+    const { status } = this.state;
+    const peronData = this.props.route.params.data;
+
+    const request = new XMLHttpRequest();
+    request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/add-condition");
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+    request.send(JSON.stringify({
+      mobile: peronData.mobile,
+      status,
+      date: new Date().toISOString().slice(0, 10)
+    }));
+
+    request.onreadystatechange = e => {
+      if (request.readyState !== 4) {
+        return;
+      }
+
+      if (request.status === 200) {
+        this.setModalVisible(false);
+      } else {
+        showMessage({ message: "Update failed Failed", description: 'Search login. PLease try again', type: "danger", icon: "danger" });
+      }
+    }
   }
 
   async UNSAFE_componentWillMount() {
@@ -58,14 +82,15 @@ class AdminPersonDetails extends Component {
   render() {
     const { modalVisible, status } = this.state;
     const personDetails = this.props.route.params.data;
+    const imageUrl = personDetails.image ? { uri: `data:image/png;base64,${personDetails.image}` } : defaultImg;
 
     return (
       <View style={styles.container}>
         <Card>
           <View style={{ flexDirection: 'column', alignItems: 'center' }}>
             <Image
-              style={{ width: 200, height: 200 }}
-              source={{ uri: personDetails.image }}
+              style={{ backgroundColor: '#f1eff0', width: 200, height: 200 }}
+              source={imageUrl}
             />
           </View>
           <Text style={{ marginTop: 30 }}>
@@ -84,7 +109,7 @@ class AdminPersonDetails extends Component {
 
         {
           modalVisible && (
-            <Overlay isVisible={modalVisible} style={styles.overlay}
+            <Overlay isVisible={modalVisible} style={styles.overlay} height='60%'
               onBackdropPress={() => this.setModalVisible(false)}>
               <View>
                 <Text style={styles.statusHeader}>
