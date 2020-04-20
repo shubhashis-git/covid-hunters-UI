@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { UserRegister } from '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
@@ -7,6 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import RadioForm from 'react-native-simple-radio-button';
+import { Notifications } from 'expo';
 
 const background = require('../assets/register_bkg.jpg');
 
@@ -18,13 +19,27 @@ class Registration extends Component {
       registerInput: {
         firstName: '',
         lastName: '',
-        type: 'User',
+        type: 'user',
         mobile: '',
-        image: null
+        image: 'NA',
+        deviceId: ''
       },
       registerProcess: false
     };
 
+  }
+
+  UNSAFE_componentWillMount = async () => {
+    try {
+      const token = await Notifications.getExpoPushTokenAsync();
+      if (token) {
+        const { registerInput } = this.state;
+        registerInput.deviceId = token;
+        this.setState({ registerInput });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   componentDidMount() {
@@ -43,7 +58,7 @@ class Registration extends Component {
   _pickImage = async () => {
     try {
       let result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
@@ -67,27 +82,52 @@ class Registration extends Component {
 
   formValidate = () => {
     const { firstName, lastName, mobile, image } = this.state.registerInput;
-    if (firstName && lastName && mobile && image) {
+    if (firstName && lastName && mobile) {
       return true;
     } else {
       return false;
     }
   }
 
-  registerHandler = async () => {
+  resetAllFields = () => {
+    const registerInput = {
+      firstName: '',
+      lastName: '',
+      type: 'user',
+      mobile: '',
+      image: 'NA',
+      deviceId: ''
+    };
+    this.setState({ registerInput });
+  }
+
+  registerHandler = () => {
+    console.log('11');
     if (this.formValidate()) {
+      console.log('22');
       const { registerInput } = this.state;
-      if (registerInput) {
-        this.setState({ registerProcess: true });
-        UserRegister(registerInput).then(resp => {
-          this.setState({ registerProcess: false });
-          if (resp.status === 200) {
-            showMessage({ message: "Registration Successful", description: resp.data, type: "primary", icon: "primary" });
-          } else {
-            showMessage({ message: "Registration Failed", description: resp.data, type: "danger", icon: "danger" });
-          }
-        });
-      }
+      console.log(registerInput);
+      this.setState({ registerProcess: true });
+      const request = new XMLHttpRequest();
+      request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/register-user");
+      request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      request.send(JSON.stringify(registerInput));
+      request.onreadystatechange = e => {
+        this.setState({ registerProcess: false });
+        if (request.readyState !== 4) {
+          return;
+        }
+
+        if (request.status === 200) {
+          //console.log('success', request.responseText);
+          this.resetAllFields();
+          showMessage({ message: "Registration Success", description: 'You are successfully registered', type: "success", icon: "success" });
+        } else {
+          //console.warn('error', request);
+          //return {status: 500, data: 'Unable to get response from server'};
+          showMessage({ message: "Registration Failed", description: 'Unable to get response from server', type: "danger", icon: "danger" });
+        }
+      };
     } else {
       showMessage({ message: "Validation Failed", description: 'All fields are required.', type: "danger", icon: "danger" });
     }

@@ -3,6 +3,7 @@ import { View, StyleSheet, AsyncStorage, Image, Text } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { UserLogin } from '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
+import PushNotification from './PushNotification';
 
 const image = require("../assets/login_bkg.png");
 
@@ -11,9 +12,7 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      // loginInput: '',
-      // loginInput: '9836252196',
-      loginInput: '9062103433',
+      loginInput: '',
       loginProcess: false
     };
   }
@@ -22,23 +21,32 @@ class Login extends Component {
     const { loginInput } = this.state;
     if (loginInput && !isNaN(loginInput)) {
       this.setState({ loginProcess: true });
-      UserLogin(loginInput).then(resp => {
-        this.setState({ loginProcess: false });
-        if (resp.status === 200) {
-          if (resp.data.length) {
-            AsyncStorage.setItem('loggedInUser', JSON.stringify(resp.data[0]));
-            if (resp.data[0].role === 'admin') {
-              this.props.navigation.navigate('Admin', { person: resp.person });
-            } else {
-              this.props.navigation.navigate('Profile');
-            }
-          } else {
-            showMessage({ message: "Login Failed", description: 'Invalid login data', type: "danger", icon: "danger" });
-          }
-        } else {
-          showMessage({ message: "Login Failed", description: resp.data, type: "danger", icon: "danger" });
+      const request = new XMLHttpRequest();
+      request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
+      request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      request.send(JSON.stringify({mobile: loginInput}));
+      request.onreadystatechange = e => {
+        this.setState({loginProcess: false});
+        if (request.readyState !== 4) {
+          return;
         }
-      });
+
+        if (request.status === 200) {
+          const successdata = JSON.parse(request.responseText);
+          AsyncStorage.setItem('loggedInUser', request.responseText);
+          if (successdata.type === 'admin') {
+            this.props.navigation.navigate('Admin');
+          } else {
+            this.props.navigation.navigate('Profile');
+          }
+          //console.log('success', successdata);          
+          //showMessage({message: "Registration Success", description: 'You are successfully registered', type: "success", icon: "success"});
+        } else {
+          //console.warn('error', request);
+          //return {status: 500, data: 'Unable to get response from server'};
+          showMessage({message: "Login Failed", description: 'Failed login. PLease try again', type: "danger", icon: "danger"});
+        }
+      };
     }
   }
 
@@ -84,6 +92,7 @@ class Login extends Component {
             />
           </View>
         </View>
+        {/* <PushNotification /> */}
       </View>
     );
   }
