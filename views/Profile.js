@@ -26,7 +26,7 @@ class Profile extends Component {
     }
   }
 
-  displayHeader = (loggedInUser) => {
+  /*displayHeader = (loggedInUser) => {
     this.props.navigation.setOptions({
       headerStyle: {
         height: 280,
@@ -39,7 +39,7 @@ class Profile extends Component {
             <Avatar
               size={140}
               rounded
-              source={{ uri: loggedInUser.avatar }}
+              source={{ uri: loggedInUser.image }}
             />
             <View>
               <Text style={styles.headerTitleText}>
@@ -52,7 +52,7 @@ class Profile extends Component {
       },
       headerRight: () => <Logout navigation={this.props.navigation} />
     });
-  }
+  }*/
 
   render() {
     const { qrCodeData, loggedInUser } = this.state;
@@ -66,15 +66,24 @@ class Profile extends Component {
         <View style={{ marginTop: 150, position: 'relative', width: '80%' }}>
           <View style={styles.profileContainer}>
             <View style={{ height: 120 }}>
-              <Avatar style={styles.avatar}
-                size={140}
-                rounded
-                source={{ uri: loggedInUser.avatar }}
-              />
+              {loggedInUser.image === 'NA' &&
+                <Avatar style={styles.avatar}
+                  size={140}
+                  rounded
+                  source={{ uri: loggedInUser.image }}
+                />
+              }
+              {loggedInUser.image !== 'NA' &&
+                <Avatar style={styles.avatar}
+                  size={140}
+                  rounded
+                  source={{ uri: loggedInUser.image }}
+                />
+              }
             </View>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitleText}>
-                {`${loggedInUser.first_name} ${loggedInUser.last_name}`}
+                {`${loggedInUser.firstName} ${loggedInUser.lastName}`}
               </Text>
               <Text style={styles.headerTitleText}>{loggedInUser.mobile}</Text>
               <Text style={[styles.headerTitleText, { textTransform: 'capitalize' }]}>
