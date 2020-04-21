@@ -65,7 +65,7 @@ class Profile extends Component {
         <Logout navigation={this.props.navigation} top='30' />
 
         <View style={{ marginTop: 150, position: 'relative', width: '80%' }}>
-          <View style={{ backgroundColor: statusObj[status] }}>
+          <View style={{ backgroundColor: this.statusObj[status] }}>
             <View style={{ height: 120 }}>
               <Avatar style={styles.avatar}
                 size={140}

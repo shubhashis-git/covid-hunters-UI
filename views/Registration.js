@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground, ImageEditor, ImageStore } from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground, ImageStore } from 'react-native';
+import ImageEditor from "@react-native-community/image-editor"
 import { Button, Input } from 'react-native-elements';
 import { UserRegister } from '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
