@@ -166,18 +166,19 @@ class Registration extends Component {
       request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
       request.send(JSON.stringify(registerInput));
       request.onreadystatechange = e => {
-        this.setState({ registerProcess: false });
         if (request.readyState !== 4) {
           return;
         }
 
         if (request.status === 200) {
-          console.log('success');
+          this.setState({ registerProcess: false });
+
           this.resetAllFields();
           showMessage({ message: "Registration Success", description: 'You are successfully registered', type: "success", icon: "success" });
         } else {
+          this.setState({ registerProcess: false });
+
           console.warn('error', request.status, request.responseText);
-          //return {status: 500, data: 'Unable to get response from server'};
           showMessage({ message: "Registration Failed", description: 'Unable to get response from server', type: "danger", icon: "danger" });
         }
       };

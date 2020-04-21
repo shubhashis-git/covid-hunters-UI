@@ -106,13 +106,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center'
   },
-  profileContainer: {
-    backgroundColor: 'green',
-  },
   avatar: {
     position: 'absolute',
     top: -40,
-    left: '34%',
+    left: '30%',
     width: 140,
     height: 140
   },
