@@ -51,35 +51,32 @@ class AdminPersonDetails extends Component {
       if (request.status === 200) {
         this.setState({ status: selectedStatus });
         console.log(peronData.deviceId);
-        this.sendNotification(peronData.deviceId);
 
         this.setModalVisible(false);
+
+        fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'accept-encoding': 'gzip, deflate',
+            'host': 'exp.host'
+          },
+          body: JSON.stringify({
+            to: peronData.deviceId,
+            sound: 'default',
+            title: 'Be Safe',
+            body: 'Your health status has been changed'
+          }),
+          }).then((response) => response.json())
+          .then((responseJson) => { 
+            console.log(responseJson);
+          })
+          .catch((error) => { console.log(error) });
       } else {
         showMessage({ message: "Update failed Failed", description: 'Search login. PLease try again', type: "danger", icon: "danger" });
       }
     }
-  }
-
-  sendNotification = (to) => {
-    fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'accept-encoding': 'gzip, deflate',
-        'host': 'exp.host'
-      },
-      body: JSON.stringify({
-        to: to,
-        sound: 'default',
-        title: 'Original Title',
-        body: 'Aj Sunday...'
-      }),
-      }).then((response) => response.json())
-      .then((responseJson) => { 
-        console.log(responseJson);
-      })
-      .catch((error) => { console.log(error) });
   }
 
   async UNSAFE_componentWillMount() {

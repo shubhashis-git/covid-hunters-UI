@@ -18,7 +18,7 @@ class Admin extends Component {
       loginInput: '',
       registerProcess: false
     };
-    this.searchPerson = this.searchPerson.bind(this, '');
+    this.searchPerson = this.searchPerson.bind(this);
     this.sharedService = SharedServices();
   }
 
@@ -52,13 +52,13 @@ class Admin extends Component {
   }
 
   handleBarCodeScanned = ({ type, data }) => {
-    this.searchPerson(data);
+    this.setState({ loginInput: data, scanned: true });
+    this.searchPerson();
   };
 
-  searchPerson = async (mobileNumber) => {
+  searchPerson = async () => {
     this.setState({ registerProcess: true });
-
-    mobileNumber = mobileNumber || this.state.loginInput;
+    const mobileNumber = this.state.loginInput;
 
     const request = new XMLHttpRequest();
     request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
