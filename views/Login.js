@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, AsyncStorage, Image, Text } from 'react-native';
+import { View, StyleSheet, Image, Text } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { showMessage } from "react-native-flash-message";
 import PushNotification from './PushNotification';
+import {SharedServices} from '../services/SharedServices';
 
 const image = require("../assets/login_bkg.png");
 
@@ -11,9 +12,11 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      loginInput: '',
+      loginInput: '9836252196',
       loginProcess: false
     };
+
+    this.sharedService = SharedServices();
   }
 
   loginHandler = () => {
@@ -24,21 +27,24 @@ class Login extends Component {
       request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
       request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
       request.send(JSON.stringify({ mobile: loginInput }));
-      request.onreadystatechange = e => {
-        this.setState({ loginProcess: false });
+      request.onreadystatechange = () => {
+        
         if (request.readyState !== 4) {
           return;
         }
-
+        
         if (request.status === 200) {
+          console.log('Login success');
           const successdata = JSON.parse(request.responseText);
-          AsyncStorage.setItem('loggedInUser', request.responseText);
+          this.sharedService.setItem('loggedInUser', successdata);
+          this.setState({ loginProcess: false });
           if (successdata.type == 'admin') {
             this.props.navigation.navigate('Admin', {data: successdata});
           } else {
             this.props.navigation.navigate('Profile');
           }
         } else {
+          this.setState({ loginProcess: false });
           showMessage({message: "Login Failed", description: 'Failed login. PLease try again', type: "danger", icon: "danger"});
         }
       };

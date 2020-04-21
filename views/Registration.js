@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground, ImageEditor, ImageStore } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { UserRegister } from '../services/ApiService';
 import { showMessage } from "react-native-flash-message";
@@ -61,7 +61,7 @@ class Registration extends Component {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.1,
+        quality: 0.09,
         base64: true
       });
       if (!result.cancelled) {
@@ -73,6 +73,58 @@ class Registration extends Component {
       console.log(E);
     }
   };
+
+  ____pickImage = async () => {
+    //prompt for camera permission
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.01,
+      base64: true
+    });
+
+    if (!result.cancelled) {
+
+      var wantedMaxSize = 250;
+      var rawheight = result.height;
+      var rawwidth = result.width;
+
+      var ratio = rawwidth / rawheight;
+      // check vertical or horizont
+      if (rawheight > rawwidth) {
+        var wantedwidth = wantedMaxSize * ratio;
+        var wantedheight = wantedMaxSize;
+      }
+      else {
+        var wantedwidth = wantedMaxSize;
+        var wantedheight = wantedMaxSize / ratio;
+      }
+
+      let resizedBase64 = await new Promise((resolve, reject) => {
+        ImageEditor.cropImage(result.uri,
+          {
+            offset: { x: 0, y: 0 },
+            size: { width: result.width, height: result.height },
+            displaySize: { width: wantedwidth, height: wantedheight },
+            resizeMode: 'contain',
+          },
+          (uri) => {
+            ImageStore.getBase64ForTag(uri,
+              (base64Data) => {
+                resolve('data:image/jpg' + ';base64,' + base64Data);
+              },
+              (reason) => reject(reason));
+          },
+          () => reject());
+      });
+      const { registerInput } = this.state;
+      registerInput.image = resizedBase64;
+      this.setState({ registerInput });
+      //console.log(resizedBase64);
+      //store resizedBase64 in db
+    }
+  }
 
   textChangeHandler = (field, value) => {
     const { registerInput } = this.state;
@@ -119,7 +171,7 @@ class Registration extends Component {
         }
 
         if (request.status === 200) {
-          //console.log('success', request.responseText);
+          console.log('success');
           this.resetAllFields();
           showMessage({ message: "Registration Success", description: 'You are successfully registered', type: "success", icon: "success" });
         } else {
@@ -185,8 +237,8 @@ class Registration extends Component {
             {/* style={{ width: 200, height: 200 }} */}
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>Upload Photo</Text>
-              {registerInput.image !== 'NA' && 
-              <Image source={{ uri: `data:image/png;base64,${registerInput.image}` }} style={{ width: 200, height: 200 }} />}
+              {registerInput.image !== 'NA' &&
+                <Image source={{ uri: `data:image/png;base64,${registerInput.image}` }} style={{ width: 200, height: 200 }} />}
               <Button title="Open camera" onPress={this._pickImage} />
             </View>
             <View style={{ flexDirection: 'column', alignItems: 'center' }}>

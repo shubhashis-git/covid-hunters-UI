@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import Logout from './Logout';
 import { QRCode } from 'react-native-custom-qr-codes-expo';
+import {SharedServices} from '../services/SharedServices';
 
 class Profile extends Component {
   constructor(props) {
@@ -11,19 +12,14 @@ class Profile extends Component {
       qrCodeData: null,
       loggedInUser: null
     };
+
+    this.sharedService = SharedServices();
   }
 
-  async UNSAFE_componentWillMount() {
-    try {
-      let loggedInUser = await AsyncStorage.getItem('loggedInUser');
-      if (loggedInUser) {
-        loggedInUser = JSON.parse(loggedInUser);
-        this.setState({ qrCodeData: loggedInUser.mobile });
-        this.setState({ loggedInUser: loggedInUser });
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  UNSAFE_componentWillMount() {
+    let loggedInUser = this.sharedService.getItem('loggedInUser');
+    this.setState({ qrCodeData: loggedInUser.mobile });
+    this.setState({ loggedInUser: loggedInUser });
   }
 
   render() {
