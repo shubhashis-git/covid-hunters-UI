@@ -5,7 +5,7 @@ import { Input } from 'react-native-elements';
 import Logout from './Logout';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { showMessage } from "react-native-flash-message";
-import {SharedServices} from '../services/SharedServices';
+import { SharedServices } from '../services/SharedServices';
 
 const image = require("../assets/background.png");
 
@@ -15,7 +15,8 @@ class Admin extends Component {
     this.state = {
       hasPermission: null,
       scanned: true,
-      loginInput: ''
+      loginInput: '',
+      registerProcess: false
     };
     this.searchPerson = this.searchPerson.bind(this, '');
     this.sharedService = SharedServices();
@@ -55,8 +56,10 @@ class Admin extends Component {
   };
 
   searchPerson = async (mobileNumber) => {
+    this.setState({ registerProcess: true });
+
     mobileNumber = mobileNumber || this.state.loginInput;
-    //console.log(mobileNumber);
+
     const request = new XMLHttpRequest();
     request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -67,16 +70,19 @@ class Admin extends Component {
       }
 
       if (request.status === 200) {
+        this.setState({ registerProcess: false });
         const successdata = JSON.parse(request.responseText);
         this.props.navigation.navigate('AdminPersonDetails', { data: successdata });
       } else {
+        this.setState({ registerProcess: false });
         showMessage({ message: "Search Failed", description: 'Search failed. PLease try again', type: "danger", icon: "danger" });
       }
     }
   }
 
   render() {
-    const { scanned } = this.state;
+    const { scanned, registerProcess } = this.state;
+
     return (
       <View style={styles.container}>
         <ImageBackground source={image} style={styles.image}>
@@ -88,6 +94,8 @@ class Admin extends Component {
                 name="angle-right"
                 size={25}
                 color="white"
+                loading={registerProcess}
+                disabled={registerProcess}
               />
             </View>
             <Text style={styles.divider}> ────────  Or  ────────</Text>

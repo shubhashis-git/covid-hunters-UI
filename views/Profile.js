@@ -65,7 +65,7 @@ class Profile extends Component {
         <Logout navigation={this.props.navigation} top='30' />
 
         <View style={{ marginTop: 150, position: 'relative', width: '80%' }}>
-          <View style={{ backgroundColor: statusObj[status] }}>
+          <View style={{ backgroundColor: this.statusObj[status] }}>
             <View style={{ height: 120 }}>
               <Avatar style={styles.avatar}
                 size={140}
@@ -106,13 +106,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center'
   },
-  profileContainer: {
-    backgroundColor: 'green',
-  },
   avatar: {
     position: 'absolute',
     top: -40,
-    left: '34%',
+    left: '30%',
     width: 140,
     height: 140
   },
