@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, ImageBackground, StyleSheet, Button, Alert } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Input } from 'react-native-elements';
+import { Input, Button } from 'react-native-elements';
 import Logout from './Logout';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { showMessage } from "react-native-flash-message";
@@ -58,6 +58,8 @@ class Admin extends Component {
   searchPerson = async (mobileNumber) => {
     this.setState({ registerProcess: true });
 
+    return;
+
     mobileNumber = mobileNumber || this.state.loginInput;
 
     const request = new XMLHttpRequest();
@@ -86,16 +88,20 @@ class Admin extends Component {
     return (
       <View style={styles.container}>
         <ImageBackground source={image} style={styles.image}>
+
           <View style={styles.containerWrapper}>
             <View style={styles.inputContainer}>
               <Input style={styles.input} placeholder='Enter mobile number' placeholderTextColor="#000"
                 onChangeText={this.textChangeHandler.bind(this)} maxLength={10} />
-              <Icon style={styles.searchIcon} onPress={this.searchPerson}
-                name="angle-right"
-                size={25}
-                color="white"
-                loading={registerProcess}
-                disabled={registerProcess}
+
+              <Button buttonStyle={styles.searchIcon} onPress={this.searchPerson} loading={registerProcess}
+                disabled={registerProcess} 
+                icon={{
+                  name: "angle-right",
+                  size: 25,
+                  color: "white",
+                  type: 'font-awesome'
+                }}
               />
             </View>
             <Text style={styles.divider}> ────────  Or  ────────</Text>
@@ -107,7 +113,7 @@ class Admin extends Component {
               />
             }
             <Button
-              style={styles.scanBtn}
+              buttonStyle={styles.scanBtn}
               title={scanned ? 'Scan QR' : 'Cancel'}
               color={scanned ? '#201484' : 'red'}
               onPress={() => this.setState({ scanned: !scanned })}
@@ -136,14 +142,15 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   searchIcon: {
-    borderWidth: 1,
+    borderWidth: 0,
     paddingHorizontal: 20,
     paddingVertical: 10,
     backgroundColor: '#201484'
   },
   scanBtn: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    textAlign: 'center'
   },
   inputContainer: {
     flexDirection: 'row',

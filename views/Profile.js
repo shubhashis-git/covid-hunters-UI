@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import Logout from './Logout';
-import { QRCode } from 'react-native-custom-qr-codes-expo';
+// import { QRCode } from 'react-native-custom-qr-codes-expo';
 import { SharedServices } from '../services/SharedServices';
 
 class Profile extends Component {
@@ -85,11 +85,11 @@ class Profile extends Component {
             <View style={styles.container}>
               {qrCodeData &&
                 <View style={{ borderWidth: 2, borderColor: '#191970', width: 205 }}>
-                  <QRCode
+                  {/* <QRCode
                     codeStyle='square'
                     content={qrCodeData}
                     size={200} color='#191970'
-                  />
+                  /> */}
                 </View>
               }
             </View>

@@ -16,7 +16,7 @@ class Navigation extends Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Admin">
           <Stack.Screen
             options={{
               headerShown: false
