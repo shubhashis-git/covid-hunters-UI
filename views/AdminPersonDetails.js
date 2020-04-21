@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native'
-import { Card, Button, Overlay, CheckBox } from 'react-native-elements'
+import { Card, Button, Overlay } from 'react-native-elements'
 import RadioButton from 'react-native-radio-button'
 
 const defaultImg = require('../assets/no_img.jpg');
@@ -13,21 +13,24 @@ class AdminPersonDetails extends Component {
 
   state = {
     modalVisible: false,
-    status: 'hello'
+    status: 'normal',
+    selectedStatus: 'normal'
   };
 
-  statusArr = [
-    { name: 'normal', color: 'green' },
-    { name: 'suspected', color: '#ff7600' },
-    { name: 'infected', color: 'red' },
-    { name: 'isolated', color: '#ff4f90' }];
+  statusObj = {
+    normal: 'green',
+    suspected: '#ff7600',
+    infected: 'red',
+    isolated: '#ff4f90'
+  };
 
   setModalVisible = (visible) => {
     this.setState({ modalVisible: visible });
   }
 
   setStatus() {
-    const { status } = this.state;
+    const { selectedStatus } = this.state;
+
     const peronData = this.props.route.params.data;
 
     const request = new XMLHttpRequest();
@@ -36,7 +39,7 @@ class AdminPersonDetails extends Component {
 
     request.send(JSON.stringify({
       mobile: peronData.mobile,
-      status,
+      status: selectedStatus,
       date: new Date().toISOString().slice(0, 10)
     }));
 
@@ -46,6 +49,8 @@ class AdminPersonDetails extends Component {
       }
 
       if (request.status === 200) {
+        this.setState({ status: selectedStatus });
+
         this.setModalVisible(false);
       } else {
         showMessage({ message: "Update failed Failed", description: 'Search login. PLease try again', type: "danger", icon: "danger" });
@@ -73,6 +78,9 @@ class AdminPersonDetails extends Component {
         } else {
           this.setState({ status: successdata[0].status });
         }
+
+        const currentStatus = this.state.status;
+        this.setState({ selectedStatus: currentStatus });
       } else {
         showMessage({ message: "Search Failed", description: 'Search login. PLease try again', type: "danger", icon: "danger" });
       }
@@ -80,16 +88,20 @@ class AdminPersonDetails extends Component {
   }
 
   render() {
-    const { modalVisible, status } = this.state;
+    const { modalVisible, status, selectedStatus } = this.state;
     const personDetails = this.props.route.params.data;
     const imageUrl = personDetails.image ? { uri: `data:image/png;base64,${personDetails.image}` } : defaultImg;
+    const statusColor = this.statusObj[status];
 
     return (
       <View style={styles.container}>
         <Card>
           <View style={{ flexDirection: 'column', alignItems: 'center' }}>
             <Image
-              style={{ backgroundColor: '#f1eff0', width: 200, height: 200 }}
+              style={{
+                backgroundColor: '#f1eff0', width: 200, height: 200,
+                borderWidth: 5, borderColor: statusColor
+              }}
               source={imageUrl}
             />
           </View>
@@ -116,16 +128,17 @@ class AdminPersonDetails extends Component {
                   Change the health status of the person under screening
                   </Text>
 
-                {this.statusArr.map(item => {
+                {Object.keys(this.statusObj).map(key => {
+                  let color = this.statusObj[key];
                   return (
-                    <View key={item.name} style={styles.radioContainer}>
+                    <View key={key} style={styles.radioContainer}>
                       <RadioButton
                         animation={'bounceIn'}
-                        isSelected={item.name === status}
-                        onPress={() => this.setState({ status: item.name })}
+                        isSelected={key === selectedStatus}
+                        onPress={() => this.setState({ selectedStatus: key })}
                       />
 
-                      <Text style={[styles.radioText, { color: item.color }]}>{item.name}</Text>
+                      <Text style={[styles.radioText, { color }]}>{key}</Text>
                     </View>
                   )
                 })}

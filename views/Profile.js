@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
+import { View, Text, AsyncStorage, StyleSheet, Alert } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import Logout from './Logout';
 import { QRCode } from 'react-native-custom-qr-codes-expo';
@@ -9,9 +9,17 @@ class Profile extends Component {
     super(props);
     this.state = {
       qrCodeData: null,
-      loggedInUser: null
+      loggedInUser: null,
+      status: 'normal'
     };
   }
+
+  statusObj = {
+    normal: 'green',
+    suspected: '#ff7600',
+    infected: 'red',
+    isolated: '#ff4f90'
+  };
 
   async UNSAFE_componentWillMount() {
     try {
@@ -20,6 +28,28 @@ class Profile extends Component {
         loggedInUser = JSON.parse(loggedInUser);
         this.setState({ qrCodeData: loggedInUser.mobile });
         this.setState({ loggedInUser: loggedInUser });
+
+        const request = new XMLHttpRequest();
+        request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/get-conditions");
+        request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        request.send(JSON.stringify({ mobile: loggedInUser.mobile }));
+        request.onreadystatechange = e => {
+          if (request.readyState !== 4) {
+            return;
+          }
+
+          if (request.status === 200) {
+            const successdata = JSON.parse(request.responseText);
+            Alert.alert('uSuccess')
+            if (!successdata || (successdata && !successdata.length)) {
+              this.setState({ status: 'normal' });
+            } else {
+              this.setState({ status: successdata[0].status });
+            }
+          } else {
+            showMessage({ message: "Status not found", description: 'Status not found. PLease try again', type: "danger", icon: "danger" });
+          }
+        }
       }
     } catch (error) {
       console.log(error);
@@ -27,7 +57,7 @@ class Profile extends Component {
   }
 
   render() {
-    const { qrCodeData, loggedInUser } = this.state;
+    const { qrCodeData, loggedInUser, status } = this.state;
 
     if (!loggedInUser) return null;
 
@@ -36,13 +66,13 @@ class Profile extends Component {
         <Logout navigation={this.props.navigation} top='30' />
 
         <View style={{ marginTop: 150, position: 'relative', width: '80%' }}>
-          <View style={styles.profileContainer}>
+          <View style={{ backgroundColor: statusObj[status] }}>
             <View style={{ height: 120 }}>
-            <Avatar style={styles.avatar}
-              size={140}
-              rounded
-              source={{ uri: `data:image/png;base64,${loggedInUser.image}` }}
-            />
+              <Avatar style={styles.avatar}
+                size={140}
+                rounded
+                source={{ uri: `data:image/png;base64,${loggedInUser.image}` }}
+              />
             </View>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitleText}>
@@ -50,10 +80,10 @@ class Profile extends Component {
               </Text>
               <Text style={styles.headerTitleText}>{loggedInUser.mobile}</Text>
               <Text style={[styles.headerTitleText, { textTransform: 'capitalize' }]}>
-                {loggedInUser.status}
+                {status}
               </Text>
             </View>
-            <View style={styles.container}>       
+            <View style={styles.container}>
               {qrCodeData &&
                 <View style={{ borderWidth: 2, borderColor: '#191970', width: 205 }}>
                   <QRCode
