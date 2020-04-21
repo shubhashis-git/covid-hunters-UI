@@ -16,21 +16,36 @@ class Navigation extends Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Admin">
+        <Stack.Navigator initialRouteName="Profile">
           <Stack.Screen
             options={{
               headerShown: false
-            }}
+            }} 
             name="Login"
             component={Login}
           />
           <Stack.Screen
             name="Registration"
             component={Registration}
+            options={{
+              headerTitleAlign:"center",
+              headerStyle: {
+                backgroundColor: '#045fa7'
+              },
+              headerTitleStyle: {
+                color: '#FFFFFF'
+              }
+            }}
           />
           <Stack.Screen
             options={{
-              headerShown: false
+              headerTitleAlign:"center",
+              headerStyle: {
+                backgroundColor: '#045fa7'
+              },
+              headerTitleStyle: {
+                color: '#FFFFFF'
+              }
             }}
             name="Profile"
             component={Profile}
@@ -42,6 +57,15 @@ class Navigation extends Component {
           />
           <Stack.Screen
             name="Admin"
+            options={{
+              headerTitleAlign:"center",
+              headerStyle: {
+                backgroundColor: '#201484'
+              },
+              headerTitleStyle: {
+                color: '#FFFFFF'
+              }
+            }}
             component={Admin}
           />
         </Stack.Navigator>

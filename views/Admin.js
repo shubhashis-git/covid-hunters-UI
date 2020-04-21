@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ImageBackground, StyleSheet, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text, ImageBackground, StyleSheet } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Logout from './Logout';
 import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -58,9 +57,7 @@ class Admin extends Component {
   searchPerson = async (mobileNumber) => {
     this.setState({ registerProcess: true });
 
-    return;
-
-    mobileNumber = mobileNumber || this.state.loginInput;
+     mobileNumber = mobileNumber || this.state.loginInput;
 
     const request = new XMLHttpRequest();
     request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/login");
@@ -88,7 +85,6 @@ class Admin extends Component {
     return (
       <View style={styles.container}>
         <ImageBackground source={image} style={styles.image}>
-
           <View style={styles.containerWrapper}>
             <View style={styles.inputContainer}>
               <Input style={styles.input} placeholder='Enter mobile number' placeholderTextColor="#000"
@@ -149,8 +145,8 @@ const styles = StyleSheet.create({
   },
   scanBtn: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    textAlign: 'center'
+    justifyContent: 'center',
+    backgroundColor: '#201484'
   },
   inputContainer: {
     flexDirection: 'row',
