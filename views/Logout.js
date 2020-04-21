@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { View, AsyncStorage, Alert } from 'react-native';
+import { View, Alert } from 'react-native';
+import {SharedServices} from '../services/SharedServices';
 
 class Logout extends Component {
   constructor(props) {
     super(props);
+
+    this.sharedService = SharedServices();
   }
 
   logOut = () => {
@@ -18,13 +21,9 @@ class Logout extends Component {
         },
         {
           text: 'Yes',
-          onPress: async () => {
-            try {
-              await AsyncStorage.clear();
-              this.props.navigation.navigate('Login');
-            } catch (error) {
-              console.log(error);
-            }
+          onPress: () => {
+            this.sharedService.removeItem('loggedInUser');
+            this.props.navigation.navigate('Login');            
           }
         }
       ]

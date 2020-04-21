@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import Logout from './Logout';
 import { QRCode } from 'react-native-custom-qr-codes-expo';
+import { SharedServices } from '../services/SharedServices';
 
 class Profile extends Component {
   constructor(props) {
@@ -12,6 +13,8 @@ class Profile extends Component {
       loggedInUser: null,
       status: 'normal'
     };
+
+    this.sharedService = SharedServices();
   }
 
   statusObj = {
@@ -23,32 +26,28 @@ class Profile extends Component {
 
   async UNSAFE_componentWillMount() {
     try {
-      let loggedInUser = await AsyncStorage.getItem('loggedInUser');
-      if (loggedInUser) {
-        loggedInUser = JSON.parse(loggedInUser);
-        this.setState({ qrCodeData: loggedInUser.mobile });
-        this.setState({ loggedInUser: loggedInUser });
+      let loggedInUser = this.sharedService.getItem('loggedInUser');
+      this.setState({ qrCodeData: loggedInUser.mobile });
+      this.setState({ loggedInUser: loggedInUser });
 
-        const request = new XMLHttpRequest();
-        request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/get-conditions");
-        request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        request.send(JSON.stringify({ mobile: loggedInUser.mobile }));
-        request.onreadystatechange = e => {
-          if (request.readyState !== 4) {
-            return;
-          }
+      const request = new XMLHttpRequest();
+      request.open("POST", "https://rest-grateful-meerkat-km.eu-gb.mybluemix.net/get-conditions");
+      request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      request.send(JSON.stringify({ mobile: loggedInUser.mobile }));
+      request.onreadystatechange = e => {
+        if (request.readyState !== 4) {
+          return;
+        }
 
-          if (request.status === 200) {
-            const successdata = JSON.parse(request.responseText);
-            Alert.alert('uSuccess')
-            if (!successdata || (successdata && !successdata.length)) {
-              this.setState({ status: 'normal' });
-            } else {
-              this.setState({ status: successdata[0].status });
-            }
+        if (request.status === 200) {
+          const successdata = JSON.parse(request.responseText);
+          if (!successdata || (successdata && !successdata.length)) {
+            this.setState({ status: 'normal' });
           } else {
-            showMessage({ message: "Status not found", description: 'Status not found. PLease try again', type: "danger", icon: "danger" });
+            this.setState({ status: successdata[0].status });
           }
+        } else {
+          showMessage({ message: "Status not found", description: 'Status not found. PLease try again', type: "danger", icon: "danger" });
         }
       }
     } catch (error) {

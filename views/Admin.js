@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, ImageBackground, StyleSheet, Button, AsyncStorage, Alert } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, Button, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input } from 'react-native-elements';
 import Logout from './Logout';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { showMessage } from "react-native-flash-message";
+import {SharedServices} from '../services/SharedServices';
 
 const image = require("../assets/background.png");
 
@@ -17,13 +18,13 @@ class Admin extends Component {
       loginInput: ''
     };
     this.searchPerson = this.searchPerson.bind(this, '');
+    this.sharedService = SharedServices();
   }
 
   async UNSAFE_componentWillMount() {
     try {
-      let loggedInUser = await AsyncStorage.getItem('loggedInUser');
+      let loggedInUser = this.sharedService.getItem('loggedInUser');
       if (loggedInUser) {
-        loggedInUser = JSON.parse(loggedInUser);
         this.props.navigation.setOptions({
           headerLeft: null,
           title: `${loggedInUser.firstName} ${loggedInUser.lastName}`,
