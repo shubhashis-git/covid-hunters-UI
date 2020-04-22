@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, Alert } from 'react-native'
+import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native'
 import { Card, Button, Overlay } from 'react-native-elements'
 import RadioButton from 'react-native-radio-button'
 
-const defaultImg = require('../assets/no_img.jpg');
+const image = require("../assets/blue_texture.png");
 
 class AdminPersonDetails extends Component {
   constructor(props) {
@@ -95,29 +95,31 @@ class AdminPersonDetails extends Component {
 
     return (
       <View style={styles.container}>
-        <Card>
-          <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-            <Image
-              style={{
-                backgroundColor: '#f1eff0', width: 200, height: 200,
-                borderWidth: 5, borderColor: statusColor
-              }}
-              source={imageUrl}
-            />
-          </View>
-          <Text style={{ marginTop: 30 }}>
-            Name: {personDetails.firstName} {personDetails.lastName}
-          </Text>
-          <Text style={{ marginBottom: 10, marginTop: 10 }}>
-            Phone: {personDetails.mobile}
-          </Text>
-          <Text style={{ marginBottom: 30 }}>
-            Status: {status}
-          </Text>
-          <Button onPress={() => this.setModalVisible(true)}
-            buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
-            title='Change Status' />
-        </Card>
+        <ImageBackground source={image} style={styles.image}>
+          <Card>
+            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+              <Image
+                style={{
+                  backgroundColor: '#f1eff0', width: 200, height: 200,
+                  borderWidth: 5, borderColor: statusColor
+                }}
+                source={imageUrl}
+              />
+            </View>
+            <Text style={{ marginTop: 30 }}>
+              Name: {personDetails.firstName} {personDetails.lastName}
+            </Text>
+            <Text style={{ marginBottom: 10, marginTop: 10 }}>
+              Phone: {personDetails.mobile}
+            </Text>
+            <Text style={{ marginBottom: 30, textTransform: 'capitalize' }}>
+              Status: {status}
+            </Text>
+            <Button onPress={() => this.setModalVisible(true)}
+              buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
+              title='Change Status' />
+          </Card>
+        </ImageBackground>
 
         {
           modalVisible && (
@@ -159,6 +161,9 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     height: '100%'
+  },
+  image: {
+    flex: 1
   },
   overlay: {
     position: 'absolute',

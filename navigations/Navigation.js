@@ -16,7 +16,7 @@ class Navigation extends Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Profile">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             options={{
               headerShown: false
@@ -52,7 +52,16 @@ class Navigation extends Component {
           />
           <Stack.Screen
             name="AdminPersonDetails"
-            options={{ title: 'Person Details' }}
+            options={{ 
+              title: 'Person Details',
+              headerTitleAlign:"center",
+              headerStyle: {
+                backgroundColor: '#045fa7'
+              },
+              headerTitleStyle: {
+                color: '#FFFFFF'
+              }
+             }}
             component={AdminPersonDetails}
           />
           <Stack.Screen
