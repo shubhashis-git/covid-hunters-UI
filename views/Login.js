@@ -12,7 +12,7 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      loginInput: '9836252196',
+      loginInput: '',
       loginProcess: false
     };
 
